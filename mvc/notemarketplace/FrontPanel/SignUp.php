@@ -91,9 +91,9 @@ else{
                     $mail->SMTPAuth = true;
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                     $mail->Port = 587;  // This is fixed port for gmail SMTP
-                    $config_email = 'hdrsh19@gmail.com';
+                    $config_email = '';
                     $mail->Username = $config_email; // YOUR gmail email which will be used as sender and PHPMailer configuration 
-                    $mail->Password = 'bhoraniyaharsh';   // YOUR gmail password for above account
+                    $mail->Password = '';   // YOUR gmail password for above account
                     // Sender and recipient settings
                     $mail->setFrom($config_email, 'Harsh');  // This email address and name will be visible as sender of email
                     $mail->addAddress($user_email, $user_firstname);  // This email is where you want to send the email
