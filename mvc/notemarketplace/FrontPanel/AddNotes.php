@@ -182,12 +182,12 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="inputTitle">Title <span>*</span></label>
-                        <input type="text" name="title" class="form-control" id="inputTitle" placeholder="Enter your notes title">
+                        <input type="text" name="note-title" class="form-control" id="inputTitle" placeholder="Enter your notes title">
                     </div>
 
                     <label for="file-image">Display Picture</label>
                     <div id="file-upload-form" class="uploader form-group">
-                        <input id="file-upload" type="file" name="fileUpload" accept="image/*" />
+                        <input type="file" name="note-picture" id="file" style="visibility: hidden;" accept="image/*"  required>
                         <label for="file-upload" id="file-drag">
                             <img id="file-image" src="#" alt="Preview" class="hidden">
                             <div id="start">
@@ -217,7 +217,7 @@
                             $type_id = $row['NoteTypeID'];
                             $type_name = $row['Name'];            
             
-                            echo "<option value='$cat_id'>{$type_name}</option>";            
+                            echo "<option value='$type_id'>{$type_name}</option>";            
                             }
                         ?>
 
@@ -227,7 +227,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="dropdownCategory">Category <span>*</span></label>
-                        <select id="dropdownCategory" class="form-control">
+                        <select name="note-category" id="dropdownCategory" class="form-control">
                             <option selected>Select your category</option>
                             <?php
 
@@ -238,7 +238,7 @@
                             $category_id = $row['NoteCategoryID'];
                             $category_name = $row['Name'];            
             
-                            echo "<option value='$cat_id'>{$category_name}</option>";            
+                            echo "<option value='$category_id'>{$category_name}</option>";            
                             }
                             ?>
                         </select>
@@ -246,7 +246,7 @@
 
                     <label for="file-image">Upload Notes <span>*</span></label>
                     <div id="file-upload-form" class="uploader form-group">
-                        <input id="file-upload" type="file" name="fileUpload" accept="image/*" />
+                        <input type="file" name="note-file[]" id="file" style="visibility: hidden;" accept="application/pdf" multiple required>
                         <label for="file-upload" id="file-drag">
                             <img id="file-image" src="#" alt="Preview" class="hidden">
                             <div id="start">
@@ -265,7 +265,7 @@
 
                     <div class="form-group">
                         <label id="noOfPages" for="inputNumberofPages">Number of Pages</label>
-                        <input type="text" class="form-control" id="inputNumberofPages"
+                        <input type="text" name="numberofpages" class="form-control" id="inputNumberofPages"
                             placeholder="Enter number of note pages">
                     </div>
                 </div>
@@ -275,8 +275,7 @@
                 <div class="col-md-12">
                     <div class="form-group mb-0 p-0">
                         <label for="description">Description <span>*</span></label>
-                        <textarea type="text" class="form-control" id="description"
-                            placeholder="Enter your description"></textarea>
+                        <textarea type="text" name="description" class="form-control" id="description" placeholder="Enter your description" required></textarea>
                     </div>
                 </div>
             </div>
@@ -291,7 +290,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="dropdownCountry">Country</label>
-                        <select id="dropdownCountry" class="form-control">
+                        <select name="country" id="dropdownCountry" class="form-control">
                             <option selected>Select your country</option>
                             <?php
 
@@ -302,7 +301,7 @@
                             $country_id = $row['CountryID'];
                             $country_name = $row['Name'];            
             
-                            echo "<option value='$cat_id'>{$country_name}</option>";            
+                            echo "<option value='$country_name' id='$category_id'>{$country_name}</option>";            
                             }
                             ?>
                         </select>
@@ -311,7 +310,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="institutionname">Institution Name</label>
-                        <input type="text" class="form-control" id="institutionname"
+                        <input type="text" name="institute-name" class="form-control" id="institutionname"
                             placeholder="Enter your institution name">
                     </div>
                 </div>
@@ -327,18 +326,18 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="coursename">Course Name</label>
-                        <input type="text" class="form-control" id="coursename" placeholder="Enter your course name">
+                        <input type="text" name="course-name" class="form-control" id="coursename" placeholder="Enter your course name">
                     </div>
                     <div class="form-group">
                         <label for="proflecturer">Professor / Lecturer</label>
-                        <input type="email" class="form-control" id="proflecturer" aria-describedby="emailHelp"
+                        <input type="email" name="professor-name" class="form-control" id="proflecturer" aria-describedby="emailHelp"
                             placeholder="Enter your professor name">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="coursecode">Course Code</label>
-                        <input type="email" class="form-control" id="coursecode" aria-describedby="emailHelp"
+                        <input type="email" name="course-code" class="form-control" id="coursecode" aria-describedby="emailHelp"
                             placeholder="Enter your course code">
                     </div>
                 </div>
@@ -355,26 +354,24 @@
                     <label>Sell For <span>*</span></label>
                     <div class="form-group">
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline1" name="customRadioInline1"
-                                class="custom-control-input">
+                            <input type="radio" name="free-paid" id="customRadioInline1" class="custom-control-input">
                             <label class="custom-control-label" for="customRadioInline1">Free</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline2" name="customRadioInline1"
-                                class="custom-control-input">
+                            <input type="radio" name="free-paid" id="customRadioInline2" class="custom-control-input">
                             <label class="custom-control-label" for="customRadioInline2">Paid</label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="sellPrice">Sell Price</label>
-                        <input type="email" class="form-control" id="sellPrice" aria-describedby="emailHelp"
+                        <input type="email" name="sell-price" class="form-control" id="sellPrice" aria-describedby="emailHelp"
                             placeholder="Enter your price">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <label for="file-image">Note Preview</label>
                     <div id="file-upload-form" class="uploader form-group">
-                        <input id="file-upload" type="file" name="fileUpload" accept="image/*" />
+                        <input id="file-upload" name="note-preview" type="file" name="fileUpload" accept="application/pdf" required />
                         <label for="file-upload" id="file-drag" class="customInput">
                             <img id="file-image" src="#" alt="Preview" class="hidden">
                             <div id="start">
@@ -395,11 +392,11 @@
 
             <div class="row btn-line">
                 <div class="form-group">
-                    <a href="#" id="btn-Submit" class="btn">SUBMIT</a>
+                    <a href="#" name="save" id="btn-Submit" class="btn">SUBMIT</a>
                 </div>
 
                 <div class="form-group">
-                    <a href="#" id="btn-Publish" class="btn" style="margin-left: 30px;">PUBLISH</a>
+                    <a href="#" name="publish" id="btn-Publish" class="btn" style="margin-left: 30px;">PUBLISH</a>
                 </div>
             </div>
         </form>
@@ -454,3 +451,118 @@
 </body>
 
 </html>
+
+
+<?php
+
+if (isset($_POST['save'])) {
+
+    echo $country_id;
+
+    /*$sellerID = 1 ;
+    $Status = 6 ;
+    $title = $_POST['note-title'];
+    $category = $_POST['category'];
+    $type = $_POST['type'];
+    $noOfPages = (int)$_POST['number-of-pages'];
+    $description = $_POST['book-description'];
+    $counrty = $_POST['country'];
+    $institutionName = $_POST['institute-name'];
+    $courseName = $_POST['course-name'];
+    $courseCode = $_POST['course-code'];
+    $professor = $_POST['pofessor-name'];
+    $sellFor = $_POST['free-paid'];
+    $sellPrice = (int)$_POST['sell-price'];
+
+    $sellFor = mysqli_query($connection, "SELECT * FROM ReferenceData WHERE Value = '$sellFor' ");
+    $sellForResult = mysqli_fetch_assoc($sellFor);
+    $isPaid = (int)$sellForResult['ID'];
+
+    $getCountry = mysqli_query($connection, "SELECT * FROM Countries WHERE Name = '$counrty'");
+    $getCountryResult = mysqli_fetch_assoc($getCountry);
+    $countryID = (int)$getCountryResult['ID'];
+
+    $getType = mysqli_query($connection, "SELECT * FROM NoteTypes WHERE Name = '$type' ");
+    $getTypeResult = mysqli_fetch_assoc($getType);
+    $typeID = (int)$getTypeResult['ID'];
+
+    $getCategory = mysqli_query($connection, "SELECT * FROM NoteCategories WHERE Name =  '$category' ");
+    $getCategoryResult = mysqli_fetch_assoc($getCategory);
+    $categoryID = (int)$getCategoryResult['ID'];
+
+    // $queryAddNotes = "INSERT INTO NotesDetails( SellerID , Status , Title , Category , NoteType , NumberofPages , Description ,  Country , Course , CourseCode , Professor , IsPaid , SellingPrice  ) VALUES( $sellerID ,  6 , '$title' , $categoryID   , $typeID  ,  $noOfPages , '$description' , $countryID  , '$courseName' , '$courseCode' , '$professor' , $isPaid , $sellPrice )";
+    $queryAddNotes = "INSERT INTO NotesDetails( SellerID , Status , Title , Category , NoteType , NumberofPages , Description ,
+     UniversityName , Country , Course , CourseCode , Professor , IsPaid , SellingPrice ) VALUES( $sellerID , 
+     $Status , '$title' , $categoryID , $type , $noOfPages , '$description' , '$institutionName' , $countryID ,'$courseName' , 
+     '$courseCode' , '$professor' , $isPaid , $sellPrice )";
+    $queryAddNotesResult = mysqli_query($connection,  $queryAddNotes);
+
+    if ($queryAddNotesResult) {
+
+        $addedNote = mysqli_insert_id($connection);
+        $pathToCreateNoteFolder = "../members/" . $sellerID . "/" . $addedNote . "/";
+        mkdir($pathToCreateNoteFolder, $mode = 0777, $recursive = false, $context = null);
+        $FolderNotesAttachments = $pathToCreateNoteFolder . "Attachements/";
+        mkdir($pathToCreateNoteFolderNotesAttachments, $mode = 0777, $recursive = false, $context = null);
+ 
+    // file To upload 
+    $dateTime  = new DateTime();
+    $timeStamp = $dateTime->getTimestamp();
+
+    // Book Image
+    if (isset($_FILES['book-image'])) {
+
+        $book_image  = $_FILES['book-image']['tmp_name'];
+        $book_path = $pathToCreateNoteFolder . "DP_" . $timeStamp;
+        $bookImageUploades = move_uploaded_file($book_image, $book_path);
+        if ($bookImageUploades) {
+            mysqli_query($connection, "UPDATE NotesDetails SET DisplayPicture = '$book_path' WHERE ID =  $addedNote");
+        }
+    }
+
+    //Book Preview
+    if (isset($_FILES['notes-preview'])) {
+
+        $bookPreview = $_FILES['notes-preview']['tmp_name'];
+        $preview_path = $pathToCreateNoteFolder . "Preview_" . $timeStamp;
+        $notePreviewUploaded =  move_uploaded_file($bookPreview, $preview_path);
+
+        if ($notePreviewUploaded) {
+            mysqli_query($connection, "UPDATE NotesDetails SET NotesPreview = '$preview_path' WHERE ID =  $addedNote");
+        }
+    }
+
+    //Book PDF
+    if (isset($_FILES['note-file'])) {
+
+        $book_file = $_FILES['note-file']['tmp_name'];
+        $fileNumber = count($book_file);
+
+        for ($i = 0; $i < $fileNumber; $i++) {
+
+            $result = mysqli_query($connection, "SELECT MAX('ID') FROM NotesAttachments ");
+            $row = mysqli_fetch_row($result);
+            $highest_id = $row[0];
+            $currentID = (int)$highest_id + 1;
+
+            $fileName = $_FILES['note-file']['name'][$i];
+            $fileTempName = $_FILES['note-file']['tmp_name'][$i];
+
+            $file_path = $FolderNotesAttachments . $currentID . "_" . $timeStamp;
+
+
+            $fileUploaded = move_uploaded_file($fileTempName, $file_path);
+
+            if ($fileUploaded) {
+                mysqli_query($connection, "INSERT INTO NotesAttachments( ID , NoteID , FileName , FilePath ) VALUES( $currentID , $addedNote , '$fileName' , '$file_path' )");
+            }
+        }
+    }
+
+} else {
+    echo "Not Inserted";
+}*/
+
+}
+
+?>

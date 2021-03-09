@@ -1,11 +1,20 @@
-<?php include "../includes/db.php";
+<?php 
+ob_start();
+include "../includes/db.php";
 
-$id = mysqli_real_escape_string($connection,$_GET['id']);
+if(isset($_GET["id"])){
+    $token = $_GET["id"];
+}
 
-$query = "UPDATE user SET IsEmailVerified = 1 WHERE UserID = '$id'";
-mysqli_query($connection,$query);
-echo "Your Account Verified";
-
+    $query = "UPDATE user SET IsEmailVerified = 1 WHERE Token = '$token'";
+    $update_user_table = mysqli_query($connection,$query);
+    if($update_user_table){
+    echo "Your Account Verified";
+    ?>
+        <script>
+        location.replace('../FrontPanel/Login.php');
+        </script>
+    <?php
+    }
 ?>
 
-<a href="http://localhost:8080/notemarketplace/FrontPanel/Login.php">Click Here to Login</a>

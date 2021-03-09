@@ -118,6 +118,11 @@
     </header>
     <!-- End Navigation -->
 
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+
     <!-- Head -->
     <section class="head">
         <div class="head-content">

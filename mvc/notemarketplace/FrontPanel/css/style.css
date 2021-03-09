@@ -25,6 +25,32 @@ section {
     padding: 60px 0;
 }
 
+
+/* ==========================================
+              preloader
+===========================================*/
+#preloader {
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+}
+
+#status {
+    width: 70px;
+    height: 70px;
+    background-image: url(../images/preloader/preloader.gif);
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -35px;
+    margin-left: -35px;
+}
+
 /* =======================================================================
                 Navigation
 ======================================================================= */
@@ -1210,7 +1236,7 @@ section {
 }
 
 #signup-box {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 #success-inform {
@@ -1222,3 +1248,6 @@ section {
     color: rgb(14, 185, 14);
 }
 
+#signup-box p.signup-done{
+    margin-top: 20px;
+}

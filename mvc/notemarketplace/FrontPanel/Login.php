@@ -1,58 +1,78 @@
 <?php include "../includes/db.php";
     ob_start();
-    $msg = "";
-    if(isset($_POST['login'])){
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $email  = mysqli_real_escape_string($connection, $email);
-    $password  = mysqli_real_escape_string($connection, $password);
-    
-    $query = "SELECT u.* FROM user AS u  WHERE u.EmailID = '{$email}' and u.Password = '{$password}'";
-    $select_user_query = mysqli_query($connection, $query);
-    if(!$select_user_query){
-        die("FAILED TO EXECUTE YOUR REQUEST" . mysqli_error($connection));
-    }
-    $count = 0;
-    while($row = mysqli_fetch_assoc($select_user_query)){
-        $db_role_id = $row['RoleID'];
-        echo $db_first_name = $row['FirstName'];
-        $db_last_name = $row['FirstName'];
-        $db_email_id = $row['EmailID'];
-        $db_password = $row['Password'];
-        $count = $count+1;
-    }
-    if($count == 0){
-         $msg ="please enter valid email id & password";
-    }
-    else if($email == $db_email_id &&  $password ==$db_password && $db_role_id=='1' )
-    {
-        
-        ?>
-<script>
-location.replace('../FrontPanel/Homepage.php');
-</script>
-<?php
-    }
-    else if($email == $db_email_id &&  $password ==$db_password && $db_role_id=='2' ){
-                          
-
-    ?>
-<script>
-location.replace('../AdminPanel/Dashboard.php');
-</script>
-<?php
-                              
-    }                
-    else if($email == $db_email_id &&  $password ==$db_password && $db_role_id=='3' ){
-                          
-
+    session_start();
 ?>
-<script>
-location.replace('../FrontPanel/Homepage.php');
-</script>
-<?php                                                   
-    }                                           
-}                                      
+<?php
+    if(isset($_POST['login']))
+    {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $email  = mysqli_real_escape_string($connection, $email);
+        $password  = mysqli_real_escape_string($connection, $password);
+        
+        $query = "SELECT * FROM user  WHERE EmailID = '{$email}' and IsEmailVerified = 1";
+        $select_user_query = mysqli_query($connection, $query);
+        $emailcount = mysqli_num_rows($select_user_query);
+        
+        if($emailcount){
+            $fetch_data_array = mysqli_fetch_assoc($select_user_query);
+            $stored_password = $fetch_data_array['Password'];
+            $_SESSION['ID'] = $fetch_data_array['UserID'];
+            $_SESSION['Fname'] = $fetch_data_array['FirstName'];
+            $_SESSION['Lname'] = $fetch_data_array['LastName'];
+            $_SESSION['MailID'] = $fetch_data_array['EmailID'];
+        
+            if($password == $stored_password){
+                if(isset($_POST['rememberme'])){
+                    setcookie('emailidcookie',$Email_ID,time()+10800);
+                    setcookie('passwordcookie',$Password,time()+10800);
+                    if($fetch_data_array['RoleID'] == 2){
+                        ?>
+                            <script>
+                            location.replace('../AdminPanel/Dashboard.php');
+                            </script>
+                        <?php
+                    }else{
+                        ?>
+                            <script>
+                            location.replace('../FrontPanel/Homepage.php');
+                            </script>
+                        <?php
+                    }
+                }else{  
+                    if($fetch_data_array['RoleID'] == 2){
+                        ?>
+                            <script>
+                            location.replace('../AdminPanel/Dashboard.php');
+                            </script>
+                        <?php
+                    }else{
+                        ?>
+                            <script>
+                            location.replace('../FrontPanel/Homepage.php');
+                            </script>
+                        <?php
+                    }
+                }
+            }
+            else{
+                ?>
+                <script>
+                    alert("Wrong Password");
+                </script>
+                <?php
+            }
+        }
+        else{
+            ?>
+            <script>
+                alert("Invalid EmailID");
+            </script>
+            <?php
+        }
+    }
+
+                                      
 ?>
 
 
@@ -114,9 +134,6 @@ location.replace('../FrontPanel/Homepage.php');
                         <p id="text-login" class="text-center">
                             Enter your email address and password to login
                         </p>
-                        <div class="form-group text-center message">
-                            <strong><?php echo $msg ?></strong>
-                        </div>
 
                         <!-- Email -->
                         <div class="form-group">
@@ -139,7 +156,7 @@ location.replace('../FrontPanel/Homepage.php');
                         <!-- Remember me -->
                         <div class="form-group">
                             <div class="form-check d-flex align-content-center p-0 m-0 div__custom">
-                                <input class="form-check-input p-0 m-0" type="checkbox" id="checkbox" />
+                                <input class="form-check-input p-0 m-0" name="rememberme" type="checkbox" id="checkbox" />
                                 <label class="form-check-label p-0 label__custom" for="checkbox">
                                     Remember Me
                                 </label>
