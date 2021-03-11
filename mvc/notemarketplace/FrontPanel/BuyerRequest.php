@@ -1,3 +1,13 @@
+<?php include "../includes/db.php"; ?>
+<?php ob_start(); ?>
+
+<?php 
+    session_start(); 
+    
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -135,7 +145,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center" scope="col">Sr No.</th>
-                                <th scope="col">Note Title</th>
+                                <th class="text-center" scope="col">Note Title</th>
                                 <th scope="col">Category</th>
                                 <th scope="col">Buyer</th>
                                 <th scope="col">Phone no.</th>
@@ -147,15 +157,39 @@
                             </tr>
                         </thead>
                         <tbody>
+                        <?php 
+                            if(isset($_GET['page'])){
+                                $page = $_GET['page'];
+                                $page =mysqli_real_escape_string($connection,$page);
+                                $page = htmlentities($page);
+                            }
+                            else{
+                                $page = 1;
+                            }
+
+                            $num_per_page = 2;
+                            $start_from = ($page-1) * $num_per_page;
+
+                            $query = "SELECT * FROM downloads, user WHERE downloads.downloader = user.UserID and IsSellerHasAllowedDownload = 0 AND IsEmailVerified = 1";
+                            $select_query = mysqli_query($connection, $query);
+                            $total_records = mysqli_num_rows($select_query);
+                            $total_pages = ceil($total_records / $num_per_page);
+                            $i=1;
+                            $k= $i * $num_per_page;
+
+                            while($row = mysqli_fetch_array($select_query))
+                            {
+
+                        ?>
                             <tr>
-                                <td class="text-center" scope="row">1</td>
-                                <td class="td-blue">Data Science</td>
-                                <td>Science</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Paid</td>
-                                <td>$250</td>
-                                <td>27 Nov 2020, 11:24:34</td>
+                                <td class="text-center" scope="row"><?php echo $i; ?></td>
+                                <td class="td-blue"><?php echo $row["NoteTitle"] ?></td>
+                                <td><?php echo $row["NoteCategory"] ?></td>
+                                <td><?php echo $row["EmailID"] ?></td>
+                                <td>+91 <?php echo rand(1111111111,9999999999); ?></td>
+                                <td><?php if($row["IsPaid"] == 1){ echo "Paid"; }else{ echo "Free"; } ?></td>
+                                <td>$<?php echo $row["PurchasedPrice"] ?></td>
+                                <td><?php echo $row["AttachmentDownloadedDate"] ?></td>
                                 <td class="text-center">
                                     <img src="../images/eye.png" alt="eye-image">
                                 </td>
@@ -172,231 +206,13 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="text-center" scope="row">2</td>
-                                <td class="td-blue">Accounts</td>
-                                <td>Commere</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Free</td>
-                                <td>$0</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">3</td>
-                                <td class="td-blue">Social Studies</td>
-                                <td>Social</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Free</td>
-                                <td>$0</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">4</td>
-                                <td class="td-blue">AI</td>
-                                <td>IT</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Paid</td>
-                                <td>$158</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">5</td>
-                                <td class="td-blue">Lorem ipsum</td>
-                                <td>Lorem</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Free</td>
-                                <td>$0</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">6</td>
-                                <td class="td-blue">Data Science</td>
-                                <td>Science</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Paid</td>
-                                <td>$555</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">7</td>
-                                <td class="td-blue">Accounts</td>
-                                <td>Commere</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Free</td>
-                                <td>$0</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">8</td>
-                                <td class="td-blue">Social Studies</td>
-                                <td>Social</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Free</td>
-                                <td>$0</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">9</td>
-                                <td class="td-blue">AI</td>
-                                <td>IT</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Paid</td>
-                                <td>$250</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">10</td>
-                                <td class="td-blue">Lorem ipsum</td>
-                                <td>Lorem</td>
-                                <td>testing123@gmail.com</td>
-                                <td>+91 9874563527</td>
-                                <td>Free</td>
-                                <td>$115</td>
-                                <td>27 Nov 2020, 11:24:34</td>
-                                <td class="text-center">
-                                    <img src="../images/eye.png" alt="eye-image">
-                                </td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                            <?php 
+                                $i++;
+                                /*if($i>$k){
+                                    break;
+                                }*/
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -405,16 +221,22 @@
             <div class="row text-center">
                 <div class="col-md-12 num">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item">
+                        <li class="<?php if($page == 1){ echo 'disabled'; }?> page-item">
                             <a class="page-link" href="#" aria-label="Previous">
                                 <img src="../images/left-arrow.png" alt="left-arrow">
                             </a>
                         </li>
-                        <li class="page-item"><a class="page-link active" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                        <?php 
+                            for($i=1;$i<=$total_pages;$i++){
+                        ?>
+                        <li class="<?php if($page == $i) { echo 'active'; }?> page-item">
+                            <a class="page-link active" href="buyerrequest.php?page=<?php echo $i ; ?>"><?php echo $i ;?></a>
+                        </li>
+                        
+                        <?php 
+                            }
+                        ?>
+
                         <li class="page-item">
                             <a class="page-link" href="#" aria-label="Next">
                                 <img src="../images/right-arrow.png" alt="right-arrow">

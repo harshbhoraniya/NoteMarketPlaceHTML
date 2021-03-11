@@ -1,8 +1,21 @@
 <?php include "../includes/db.php"; ?>
-
 <?php 
+    ob_start();
+    session_start();
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
+    use PHPMailer\PHPMailer\Exception; 
 
+    if(!isset($_SESSION['ID'])){
+        ?>
+        <script>
+            location.replace('../FrontPanel/Login.php');
+        </script>
+        <?php
+    }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -98,7 +111,7 @@
                                         <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                         <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
                                         <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                        <a class="dropdown-item btn-logout" href="Login.php">LogOut</a>
+                                        <a class="dropdown-item btn-logout" href="Logout.php">LogOut</a>
                                     </div>
                                 </div>
                             </li>
@@ -139,7 +152,7 @@
                                             <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                             <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
                                             <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                            <a class="dropdown-item btn-logout" href="Login.php">LogOut</a>
+                                            <a class="dropdown-item btn-logout" href="Logout.php">LogOut</a>
                                         </div>
                                     </div>
                                 </li>
@@ -187,7 +200,7 @@
 
                     <label for="file-image">Display Picture</label>
                     <div id="file-upload-form" class="uploader form-group">
-                        <input type="file" name="note-picture" id="file" style="visibility: hidden;" accept="image/*"  required>
+                        <input type="file" name="note-picture" id="displaypicture" style="visibility: hidden;" accept="image/*"  >
                         <label for="file-upload" id="file-drag">
                             <img id="file-image" src="#" alt="Preview" class="hidden">
                             <div id="start">
@@ -195,18 +208,12 @@
                                 <div>Upload a picture</div>
                                 <div id="notimage" class="hidden">Please select an image</div>
                             </div>
-                            <div id="response" class="hidden">
-                                <div id="messages"></div>
-                                <progress class="progress" id="file-progress" value="0">
-                                    <span>0</span>%
-                                </progress>
-                            </div>
                         </label>
                     </div>
 
                     <div class="form-group">
                         <label id="type" for="dropdownType">Type</label>
-                        <select name="note_type" id="dropdownType" class="form-control">
+                        <select name="note-type" id="dropdownType" class="form-control">
                             <option selected>Select your category</option>
                         <?php
 
@@ -217,7 +224,9 @@
                             $type_id = $row['NoteTypeID'];
                             $type_name = $row['Name'];            
             
-                            echo "<option value='$type_id'>{$type_name}</option>";            
+                            ?>
+                                <option value="<?php echo $type_id;?>" ><?php echo $type_name; ?></option>
+                            <?php         
                             }
                         ?>
 
@@ -227,7 +236,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="dropdownCategory">Category <span>*</span></label>
-                        <select name="note-category" id="dropdownCategory" class="form-control">
+                        <select name="note-category" id="dropdownCategory" class="form-control" >
                             <option selected>Select your category</option>
                             <?php
 
@@ -237,8 +246,9 @@
                             while($row = mysqli_fetch_assoc($select_category )) {
                             $category_id = $row['NoteCategoryID'];
                             $category_name = $row['Name'];            
-            
-                            echo "<option value='$category_id'>{$category_name}</option>";            
+                                ?>
+                                <option value="<?php echo $category_id;?>" ><?php echo $category_name; ?></option>
+                            <?php         
                             }
                             ?>
                         </select>
@@ -246,19 +256,13 @@
 
                     <label for="file-image">Upload Notes <span>*</span></label>
                     <div id="file-upload-form" class="uploader form-group">
-                        <input type="file" name="note-file[]" id="file" style="visibility: hidden;" accept="application/pdf" multiple required>
+                        <input type="file" name="note-file[]" id="uploadnote" style="visibility: hidden;" accept="application/pdf" multiple >
                         <label for="file-upload" id="file-drag">
-                            <img id="file-image" src="#" alt="Preview" class="hidden">
+                            <img id="upload-note" src="#" alt="Preview" class="hidden">
                             <div id="start">
                                 <img src="../images/upload-note.png" height="46" width="50" />
                                 <div>Upload your notes</div>
                                 <div id="notimage" class="hidden">Please select an image</div>
-                            </div>
-                            <div id="response" class="hidden">
-                                <div id="messages"></div>
-                                <progress class="progress" id="file-progress" value="0">
-                                    <span>0</span>%
-                                </progress>
                             </div>
                         </label>
                     </div>
@@ -275,7 +279,7 @@
                 <div class="col-md-12">
                     <div class="form-group mb-0 p-0">
                         <label for="description">Description <span>*</span></label>
-                        <textarea type="text" name="description" class="form-control" id="description" placeholder="Enter your description" required></textarea>
+                        <textarea type="text" name="description" class="form-control" id="description" placeholder="Enter your description" ></textarea>
                     </div>
                 </div>
             </div>
@@ -301,7 +305,9 @@
                             $country_id = $row['CountryID'];
                             $country_name = $row['Name'];            
             
-                            echo "<option value='$country_name' id='$category_id'>{$country_name}</option>";            
+                            ?>
+                                <option value="<?php echo $country_id;?>" ><?php echo $country_name; ?></option>
+                            <?php          
                             }
                             ?>
                         </select>
@@ -354,11 +360,11 @@
                     <label>Sell For <span>*</span></label>
                     <div class="form-group">
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="free-paid" id="customRadioInline1" class="custom-control-input">
+                            <input type="radio" name="sellfor" value="0" id="customRadioInline1" class="custom-control-input">
                             <label class="custom-control-label" for="customRadioInline1">Free</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" name="free-paid" id="customRadioInline2" class="custom-control-input">
+                            <input type="radio" name="sellfor" value="1" id="customRadioInline2" class="custom-control-input">
                             <label class="custom-control-label" for="customRadioInline2">Paid</label>
                         </div>
                     </div>
@@ -371,7 +377,7 @@
                 <div class="col-md-6">
                     <label for="file-image">Note Preview</label>
                     <div id="file-upload-form" class="uploader form-group">
-                        <input id="file-upload" name="note-preview" type="file" name="fileUpload" accept="application/pdf" required />
+                        <input id="file-upload" name="note-preview" type="notepreview" name="fileUpload" accept="application/pdf"  />
                         <label for="file-upload" id="file-drag" class="customInput">
                             <img id="file-image" src="#" alt="Preview" class="hidden">
                             <div id="start">
@@ -392,11 +398,11 @@
 
             <div class="row btn-line">
                 <div class="form-group">
-                    <a href="#" name="save" id="btn-Submit" class="btn">SUBMIT</a>
+                    <button href="#" name="save" id="btn-Submit" class="btn" <?php if(isset($_POST['save'])){echo "disabled";}?>>SUBMIT</button>
                 </div>
 
                 <div class="form-group">
-                    <a href="#" name="publish" id="btn-Publish" class="btn" style="margin-left: 30px;">PUBLISH</a>
+                    <button href="#" name="publish" id="btn-Publish" class="btn" style="margin-left: 30px;" <?php if(!isset($_POST['save'])){echo "disabled";}?>>PUBLISH</button>
                 </div>
             </div>
         </form>
@@ -454,115 +460,217 @@
 
 
 <?php
+    $ID = $_SESSION['ID'];
 
-if (isset($_POST['save'])) {
+    if (isset($_POST['save'])){
 
-    echo $country_id;
+        $title = mysqli_real_escape_string($connection, $_POST['title']);
+        $_SESSION['title'] = $title;
 
-    /*$sellerID = 1 ;
-    $Status = 6 ;
-    $title = $_POST['note-title'];
-    $category = $_POST['category'];
-    $type = $_POST['type'];
-    $noOfPages = (int)$_POST['number-of-pages'];
-    $description = $_POST['book-description'];
-    $counrty = $_POST['country'];
-    $institutionName = $_POST['institute-name'];
-    $courseName = $_POST['course-name'];
-    $courseCode = $_POST['course-code'];
-    $professor = $_POST['pofessor-name'];
-    $sellFor = $_POST['free-paid'];
-    $sellPrice = (int)$_POST['sell-price'];
+        $catrgory = mysqli_real_escape_string($connection, $_POST['note-category']);
+        $_SESSION['category'] = $category;
 
-    $sellFor = mysqli_query($connection, "SELECT * FROM ReferenceData WHERE Value = '$sellFor' ");
-    $sellForResult = mysqli_fetch_assoc($sellFor);
-    $isPaid = (int)$sellForResult['ID'];
+        $displaypicture = $_FILES['note-pitcure'];
+        $_SESSION['displaypicture'] = $displaypicture;
 
-    $getCountry = mysqli_query($connection, "SELECT * FROM Countries WHERE Name = '$counrty'");
-    $getCountryResult = mysqli_fetch_assoc($getCountry);
-    $countryID = (int)$getCountryResult['ID'];
+        $uploadnote = $_FILES['note-file'];
+        $_SESSION['uploadnote'] = $uploadnote;
 
-    $getType = mysqli_query($connection, "SELECT * FROM NoteTypes WHERE Name = '$type' ");
-    $getTypeResult = mysqli_fetch_assoc($getType);
-    $typeID = (int)$getTypeResult['ID'];
+        $type = mysqli_real_escape_string($connection, $_POST['note-type']);
+        $_SESSION['type'] = $type;
 
-    $getCategory = mysqli_query($connection, "SELECT * FROM NoteCategories WHERE Name =  '$category' ");
-    $getCategoryResult = mysqli_fetch_assoc($getCategory);
-    $categoryID = (int)$getCategoryResult['ID'];
+        $catrgory = mysqli_real_escape_string($connection, $_POST['note-category']);
+        $_SESSION['category'] = $category;
 
-    // $queryAddNotes = "INSERT INTO NotesDetails( SellerID , Status , Title , Category , NoteType , NumberofPages , Description ,  Country , Course , CourseCode , Professor , IsPaid , SellingPrice  ) VALUES( $sellerID ,  6 , '$title' , $categoryID   , $typeID  ,  $noOfPages , '$description' , $countryID  , '$courseName' , '$courseCode' , '$professor' , $isPaid , $sellPrice )";
-    $queryAddNotes = "INSERT INTO NotesDetails( SellerID , Status , Title , Category , NoteType , NumberofPages , Description ,
-     UniversityName , Country , Course , CourseCode , Professor , IsPaid , SellingPrice ) VALUES( $sellerID , 
-     $Status , '$title' , $categoryID , $type , $noOfPages , '$description' , '$institutionName' , $countryID ,'$courseName' , 
-     '$courseCode' , '$professor' , $isPaid , $sellPrice )";
-    $queryAddNotesResult = mysqli_query($connection,  $queryAddNotes);
+        $pages = mysqli_real_escape_string($connection, $_POST['numberofpages']);
+        $_SESSION['pages'] = $pages;
 
-    if ($queryAddNotesResult) {
+        $description = mysqli_real_escape_string($connection, $_POST['description']);
+        $_SESSION['description'] = $description;
 
-        $addedNote = mysqli_insert_id($connection);
-        $pathToCreateNoteFolder = "../members/" . $sellerID . "/" . $addedNote . "/";
-        mkdir($pathToCreateNoteFolder, $mode = 0777, $recursive = false, $context = null);
-        $FolderNotesAttachments = $pathToCreateNoteFolder . "Attachements/";
-        mkdir($pathToCreateNoteFolderNotesAttachments, $mode = 0777, $recursive = false, $context = null);
- 
-    // file To upload 
-    $dateTime  = new DateTime();
-    $timeStamp = $dateTime->getTimestamp();
+        $country = mysqli_real_escape_string($connection, $_POST['country']);
+        $_SESSION['country'] = $country;
 
-    // Book Image
-    if (isset($_FILES['book-image'])) {
+        $institute = mysqli_real_escape_string($connection, $_POST['institute-name']);
+        $_SESSION['institute'] = $institute;
 
-        $book_image  = $_FILES['book-image']['tmp_name'];
-        $book_path = $pathToCreateNoteFolder . "DP_" . $timeStamp;
-        $bookImageUploades = move_uploaded_file($book_image, $book_path);
-        if ($bookImageUploades) {
-            mysqli_query($connection, "UPDATE NotesDetails SET DisplayPicture = '$book_path' WHERE ID =  $addedNote");
+        $course = mysqli_real_escape_string($connection, $_POST['course-name']);
+        $_SESSION['course'] = $course;
+
+        $coursecode = mysqli_real_escape_string($connection, $_POST['course-code']);
+        $_SESSION['coursecode'] = $coursecode;
+        
+        $professor = mysqli_real_escape_string($connection, $_POST['professor-name']);
+        $_SESSION['professor'] = $professor;
+
+        $country = mysqli_real_escape_string($connection, $_POST['country']);
+        $_SESSION['country'] = $country;
+
+        $sellfor = mysqli_real_escape_string($connection, $_POST['sellfor']);
+        $_SESSION['sellfor'] = $sellfor;
+
+        $price = mysqli_real_escape_string($connection, $_POST['sell-price']);
+        if($sellfor == 0){
+            $price = 0;
         }
-    }
+        $_SESSION['price'] = $price;
 
-    //Book Preview
-    if (isset($_FILES['notes-preview'])) {
+        $preview = $_FILES['note-preview'];
+        $_SESSION['preview'] = $preview;
 
-        $bookPreview = $_FILES['notes-preview']['tmp_name'];
-        $preview_path = $pathToCreateNoteFolder . "Preview_" . $timeStamp;
-        $notePreviewUploaded =  move_uploaded_file($bookPreview, $preview_path);
+        $loginID = $_SESSION['ID'];
 
-        if ($notePreviewUploaded) {
-            mysqli_query($connection, "UPDATE NotesDetails SET NotesPreview = '$preview_path' WHERE ID =  $addedNote");
+        $displaypicname = $displaypic['name'];
+        $displaypic_ext = explode('.',$displaypicname);
+        $displaypic_ext_check = strtolower(end($displaypic_ext));
+        $valid_displaypic_ext = array('png','jpg','jpeg');
+        $displaypicnewname = "bp_".date("dmyhis").'.'.$displaypic_ext_check;
+
+        $previewname = $preview['name'];
+        $preview_ext = explode('.',$previewname);
+        $preview_ext_check = strtolower(end($preview_ext));
+        $valid_preview_ext = array('pdf');
+        $previewnewname = "preview_".date("dmyhis").'.'.$preview_ext_check;
+
+        $countfiles = count($uploadnote['name']);
+        for($i=0 ; $i<$countfiles ; $i++){
+            $uploadnotename = $uploadnote['name'][$i];
+            $uploadnote_ext = explode('.',$uploadnotename);
+            $uploadnote_ext_check = strtolower(end($uploadnote_ext));
+            $valid_uploadnote_ext = array('pdf');
         }
-    }
 
-    //Book PDF
-    if (isset($_FILES['note-file'])) {
+        if(in_array($displaypic_ext_check,$valid_displaypic_ext) && in_array($uploadnote_ext_check,$valid_uploadnote_ext) && in_array($preview_ext_check,$valid_preview_ext) ) {
 
-        $book_file = $_FILES['note-file']['tmp_name'];
-        $fileNumber = count($book_file);
+            $query = "INSERT INTO sellernotes(SellerID, Status,ActionedBy,Title,Category,DisplayPicture, NoteType, NumberofPages, Description, UniversityName,Country, Course, CourseCode, Professor, IsPaid, SellingPrice,NotesPreview,CreatedBy,ModifiedBy) 
+                            VALUES ('$loginID','6','$loginID','$title','$category','$displaypicnewname','$type','$pages','$description','$institution','$country','$course','$coursecode','$professor',$sellfor,'$price','$previewnewname','$loginID','$loginID')";
+            $insert_note = mysqli_query($connection, $query);
+            $noteid = mysqli_inser_id($connection);
+            $_SESSION['noteid'] = $noteid;
+            $_SESSION['notetitle']  = $title;
 
-        for ($i = 0; $i < $fileNumber; $i++) {
-
-            $result = mysqli_query($connection, "SELECT MAX('ID') FROM NotesAttachments ");
-            $row = mysqli_fetch_row($result);
-            $highest_id = $row[0];
-            $currentID = (int)$highest_id + 1;
-
-            $fileName = $_FILES['note-file']['name'][$i];
-            $fileTempName = $_FILES['note-file']['tmp_name'][$i];
-
-            $file_path = $FolderNotesAttachments . $currentID . "_" . $timeStamp;
-
-
-            $fileUploaded = move_uploaded_file($fileTempName, $file_path);
-
-            if ($fileUploaded) {
-                mysqli_query($connection, "INSERT INTO NotesAttachments( ID , NoteID , FileName , FilePath ) VALUES( $currentID , $addedNote , '$fileName' , '$file_path' )");
+            $displaypicturepath = $displaypicture['tmp-name'];
+            if(!is_dir("'../uplodes/'.'$loginID.'/'.$noteid.'/'")){
+                mkdir("../upload/".$loginID."/".$noteid."/",0777,true);
             }
+            $displaypicture_desti = '../uplodes'.$loginID.'/'.$noteid.'/'.$displaypicnewname;
+            move_uploaded_file($displaypicturepath, $displaypicture_desti);
+
+            $previewpath = $preview['tmp_name'];
+            $preview_dest = '../upload/'.$loginID.'/'.$noteid.'/'.$previewnewname;
+            move_uploaded_file($previewpath,$preview_dest);
+
+
+            for($i=0;$i<$countfiles;$i++){
+                $uploadnotenewname = "Attachment_[$i]_".date("dmyhis").'.'.$uploadnote_ext_check;
+                $uploadnotepath = $uploadnote['tmp_name'];
+    
+                if(!is_dir("'../upload/'.$loginID.'/'.$noteid.'/Attachment'.'/'")){
+                    mkdir("../upload/".$loginID."/".$noteid."/Attachment"."/",0777,true);
+                }
+                $uploadnote_dest = '../upload/'.$loginID.'/'.$noteid.'/Attachment'.'/'.$uploadnotenewname;
+                move_uploaded_file($uploadnotepath[$i],$uploadnote_dest);
+            
+                $query ="INSERT INTO sellernotesattachements( NoteID , FileName , FilePath , CreatedBy, ModifiedBy, IsActive) 
+                                VALUES ('$noteid','$uploadnotenewname','$uploadnote_dest','$loginID','$loginID', 1 )";
+                $insert_attechment= mysqli_query($connection,$query);
+                $attachmentid = mysqli_insert_id($connection);
+            }
+
+            if($insert_note && $insert_attechment){
+                ?>
+                    <script>
+                        alert("note added !!");
+                    </script>
+                <?php
+            }
+            else{
+                ?>
+                    <script>
+                        alert("note added  faild!!");
+                    </script>
+                <?php
+            }
+
+        }
+        else{
+            ?>
+                <script>
+                    alert("please choose proper file type !! for display picture jpg , jpeg , png !! for preview and attachment file pdf ");
+                </script>
+            <?php
         }
     }
 
-} else {
-    echo "Not Inserted";
-}*/
+    if(isset($_POST['publish'])){      
+    ?>
+        <script>
+        if (confirm('Publishing this note will send note to administrator for review, once administrator review and approve then this note will be published to portal. Press yes to continue.')) {
+            <?php 
+                $noteid = $_SESSION['noteid'];
+                $note_title = $_SESSION['notetitle'];
+                $seller_name = $_SESSION['FNAME'];
+                $query = "UPDATE seller_notes SET Status = 7 WHERE ID =$noteid";
+                $uquery = mysqli_query($connection, $query);
 
-}
+                require_once __DIR__ . '../src/Exception.php';
+                require_once __DIR__ . '../src/PHPMailer.php';
+                require_once __DIR__ . '../src/SMTP.php';
+                $mail = new PHPMailer(true);
+                try{
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port = 587;
+                    $config_email = 'hdrsh19@gmail.com';
+                    $mail->Username = $config_email;
+                    $mail->Password = 'H@rsh11199';
+                    $mail->setFrom($config_email, 'NotesMarketPlace');  // This email address and name will be visible as sender of email
+                    $mail->addAddress('hdrsh128@gmail.com', 'Harsh Patel');  // This email is where you want to send the email
+                    $mail->addReplyTo($config_email, 'NotesMarketPlace');   // If receiver replies to the email, it will be sent to this email address
+                    // Setting the email content
+                    $mail->IsHTML(true);  
+                    $mail->Subject = "Note Review Update";    
+                    $mail->Body ="<table style='height:60%;width: 60%; position: absolute;margin-left:10%;font-family:Open Sans !important;background: white;border-radius: 3px;padding-left: 2%;padding-right: 2%;'>
+                        <thead>
+                            <th>
+                                <img src='https://i.ibb.co/HVyPwqM/top-logo1.png' alt='logo' style='margin-top: 5%;'>
+                            </th>
+                        </thead>
+                        <tbody>
+                            <br>
+                            <tr style='height: 60px;font-family: Open Sans;font-size: 26px;font-weight: 600;line-height: 30px;color: #6255a5;'>
+                                <td class='text-1'>New Note Published</td>
+                            </tr>
+                            <tr style='height: 40px;font-family: Open Sans;font-size: 18px;font-weight: 600;line-height: 22px;color: #333333;margin-bottom: 20px;'>
+                                <td class='text-2'>Hello Admin,</td>
+                            </tr>
+                            <tr style='height: 60px;'>
+                                <td class='text-3'>
+                                    We want to inform you that, <b>$seller_name</b> sent his note <br> <b>$note_title</b> for review. Please look at the notes and take required actions.
+                                </td>
+                            </tr>
+                            <tr style='height: 60px;'>
+                                <td class='text-3'>
+                                    Regards <br>
+                                    NotesMarketPlace
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>";   //Email body
+                    $mail->AltBody = 'Plain text message body for non-HTML email client. Gmail SMTP email body.';   //Alternate body of email
+                    $mail->send();
+                } catch (Exception $e) {
+                    echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
+                }
+                ?>
+                }else{
+        
+                }
+            
+        </script>
+        <?php
+    }
 
 ?>
