@@ -184,7 +184,7 @@
 
     <!-- Add Notes  -->
     <section class="container">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <!-- Basic Note Details -->
             <div class="row heading">
                 <div class="col-md-12 p-0">
@@ -198,18 +198,8 @@
                         <input type="text" name="note-title" class="form-control" id="inputTitle" placeholder="Enter your notes title">
                     </div>
 
-                    <label for="file-image">Display Picture</label>
-                    <div id="file-upload-form" class="uploader form-group">
-                        <input type="file" name="note-picture" id="displaypicture" style="visibility: hidden;" accept="image/*"  >
-                        <label for="file-upload" id="file-drag">
-                            <img id="file-image" src="#" alt="Preview" class="hidden">
-                            <div id="start">
-                                <img src="../images/upload-file.png" height="46" width="50" />
-                                <div>Upload a picture</div>
-                                <div id="notimage" class="hidden">Please select an image</div>
-                            </div>
-                        </label>
-                    </div>
+                    <label for="display">Display Picture</label>
+                    <input type="file" name="display-picture" class="form-control-file display" id="displaypicture" required <?php if(isset($_POST['save'])){ echo "disabled" ; }?>>
 
                     <div class="form-group">
                         <label id="type" for="dropdownType">Type</label>
@@ -253,20 +243,9 @@
                             ?>
                         </select>
                     </div>
-
-                    <label for="file-image">Upload Notes <span>*</span></label>
-                    <div id="file-upload-form" class="uploader form-group">
-                        <input type="file" name="note-file[]" id="uploadnote" style="visibility: hidden;" accept="application/pdf" multiple >
-                        <label for="file-upload" id="file-drag">
-                            <img id="upload-note" src="#" alt="Preview" class="hidden">
-                            <div id="start">
-                                <img src="../images/upload-note.png" height="46" width="50" />
-                                <div>Upload your notes</div>
-                                <div id="notimage" class="hidden">Please select an image</div>
-                            </div>
-                        </label>
-                    </div>
-
+                        <label for="display">Upload Notes</label>
+                        <input type="file" name="notes-file[]" class="form-control-file upload-notes" id="uploadnote" required multiple <?php if(isset($_POST['save'])){ echo "disabled" ; }?>>
+                    
                     <div class="form-group">
                         <label id="noOfPages" for="inputNumberofPages">Number of Pages</label>
                         <input type="text" name="numberofpages" class="form-control" id="inputNumberofPages"
@@ -336,14 +315,14 @@
                     </div>
                     <div class="form-group">
                         <label for="proflecturer">Professor / Lecturer</label>
-                        <input type="email" name="professor-name" class="form-control" id="proflecturer" aria-describedby="emailHelp"
+                        <input type="text" name="professor-name" class="form-control" id="proflecturer" 
                             placeholder="Enter your professor name">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="coursecode">Course Code</label>
-                        <input type="email" name="course-code" class="form-control" id="coursecode" aria-describedby="emailHelp"
+                        <input type="text" name="course-code" class="form-control" id="coursecode" 
                             placeholder="Enter your course code">
                     </div>
                 </div>
@@ -370,29 +349,12 @@
                     </div>
                     <div class="form-group">
                         <label for="sellPrice">Sell Price</label>
-                        <input type="email" name="sell-price" class="form-control" id="sellPrice" aria-describedby="emailHelp"
-                            placeholder="Enter your price">
+                        <input type="text" name="sell-price" class="form-control" id="sellPrice"  placeholder="Enter your price">
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="form-group col-md-6">
                     <label for="file-image">Note Preview</label>
-                    <div id="file-upload-form" class="uploader form-group">
-                        <input id="file-upload" name="note-preview" type="notepreview" name="fileUpload" accept="application/pdf"  />
-                        <label for="file-upload" id="file-drag" class="customInput">
-                            <img id="file-image" src="#" alt="Preview" class="hidden">
-                            <div id="start">
-                                <img src="../images/upload-file.png" height="46" width="50" />
-                                <div>Upload a file</div>
-                                <div id="notimage" class="hidden">Please select an image</div>
-                            </div>
-                            <div id="response" class="hidden">
-                                <div id="messages"></div>
-                                <progress class="progress" id="file-progress" value="0">
-                                    <span>0</span>%
-                                </progress>
-                            </div>
-                        </label>
-                    </div>
+                    <input type="file" name="notepreview" class="form-control upload-notes" id="noteprevie" name="Upload a picture" required <?php if(isset($_POST['save'])){ echo "disabled" ; }?>>
                 </div>
             </div>
 
@@ -464,23 +426,20 @@
 
     if (isset($_POST['save'])){
 
-        $title = mysqli_real_escape_string($connection, $_POST['title']);
+        $title = mysqli_real_escape_string($connection, $_POST['note-title']);
         $_SESSION['title'] = $title;
 
-        $catrgory = mysqli_real_escape_string($connection, $_POST['note-category']);
+        $category = mysqli_real_escape_string($connection, $_POST['note-category']);
         $_SESSION['category'] = $category;
 
-        $displaypicture = $_FILES['note-pitcure'];
+        $displaypicture = $_FILES['display-picture'];
         $_SESSION['displaypicture'] = $displaypicture;
 
-        $uploadnote = $_FILES['note-file'];
+        $uploadnote = $_FILES['notes-file'];
         $_SESSION['uploadnote'] = $uploadnote;
 
         $type = mysqli_real_escape_string($connection, $_POST['note-type']);
         $_SESSION['type'] = $type;
-
-        $catrgory = mysqli_real_escape_string($connection, $_POST['note-category']);
-        $_SESSION['category'] = $category;
 
         $pages = mysqli_real_escape_string($connection, $_POST['numberofpages']);
         $_SESSION['pages'] = $pages;
@@ -515,12 +474,13 @@
         }
         $_SESSION['price'] = $price;
 
-        $preview = $_FILES['note-preview'];
+        $preview = $_FILES['notepreview'];
         $_SESSION['preview'] = $preview;
 
         $loginID = $_SESSION['ID'];
+        $isactive = 1;
 
-        $displaypicname = $displaypic['name'];
+        $displaypicname = $displaypicture['name'];
         $displaypic_ext = explode('.',$displaypicname);
         $displaypic_ext_check = strtolower(end($displaypic_ext));
         $valid_displaypic_ext = array('png','jpg','jpeg');
@@ -542,18 +502,18 @@
 
         if(in_array($displaypic_ext_check,$valid_displaypic_ext) && in_array($uploadnote_ext_check,$valid_uploadnote_ext) && in_array($preview_ext_check,$valid_preview_ext) ) {
 
-            $query = "INSERT INTO sellernotes(SellerID, Status,ActionedBy,Title,Category,DisplayPicture, NoteType, NumberofPages, Description, UniversityName,Country, Course, CourseCode, Professor, IsPaid, SellingPrice,NotesPreview,CreatedBy,ModifiedBy) 
-                            VALUES ('$loginID','6','$loginID','$title','$category','$displaypicnewname','$type','$pages','$description','$institution','$country','$course','$coursecode','$professor',$sellfor,'$price','$previewnewname','$loginID','$loginID')";
+            $query = "INSERT INTO sellernotes(SellerID, Status, ActionedBy, Title, Category, DisplayPicture, NoteType, NumberofPages, Description, UniversityName, Country, Course, CourseCode, Professor, IsPaid, SellingPrice, NotesPreview,  CreatedBy,  ModifiedBy, IsActive) 
+                            VALUES ('$loginID','6','$loginID','$title','$category','$displaypicnewname','$type','$pages','$description','$institute','$country','$course','$coursecode','$professor',$sellfor,'$price','$previewnewname','$loginID' ,'$loginID','$isactive')";
             $insert_note = mysqli_query($connection, $query);
-            $noteid = mysqli_inser_id($connection);
+            $noteid = mysqli_insert_id($connection);
             $_SESSION['noteid'] = $noteid;
             $_SESSION['notetitle']  = $title;
 
-            $displaypicturepath = $displaypicture['tmp-name'];
-            if(!is_dir("'../uplodes/'.'$loginID.'/'.$noteid.'/'")){
+            $displaypicturepath = $displaypicture['tmp_name'];
+            if(!is_dir("'../upload/'.'$loginID.'/'.$noteid.'/'")){
                 mkdir("../upload/".$loginID."/".$noteid."/",0777,true);
             }
-            $displaypicture_desti = '../uplodes'.$loginID.'/'.$noteid.'/'.$displaypicnewname;
+            $displaypicture_desti = '../upload/'.$loginID.'/'.$noteid.'/'.$displaypicnewname;
             move_uploaded_file($displaypicturepath, $displaypicture_desti);
 
             $previewpath = $preview['tmp_name'];
