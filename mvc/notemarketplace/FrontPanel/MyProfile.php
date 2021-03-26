@@ -1,3 +1,59 @@
+<?php include "../includes/db.php" ?>
+<?php ob_start(); session_start(); ?>
+
+<?php 
+    if(!isset($_SESSION['ID'])){
+        ?>
+        <script>
+            location.replace('../FrontPanel/Login.php');
+        </script>
+        <?php
+    }
+    $userid = $_SESSION['ID'];
+    $query = "SELECT * FROM user WHERE UserID = $userid";
+    $result = mysqli_query($connection, $query);
+    $row = mysqli_fetch_array($result);
+
+    if(isset($_POST['save'])){
+        $userid = $_SESSION['ID'];
+        $fname = mysqli_real_escape_string($connection, $_POST['fname']);
+        $_SESSION['FNAME'] = $fname;
+
+        $lname = mysqli_real_escape_string($connection, $_POST['lname']);
+        $_SESSION['LNAME'] = $lname;
+
+        $email = mysqli_real_escape_string($connection, $_POST['email']);
+        $_SESSION['MAILID'] = $email;
+
+        $semail = mysqli_real_escape_string($connection, $_POST['semail']);
+        $countrycode = mysqli_real_escape_string($connection, $_POST['countrycode']);
+        $mobile = mysqli_real_escape_string($connection, $_POST['mobileno']);
+
+        $userpic = $_FILES['dispic'];
+
+        $displaypic = $userpic['name'];
+        $displaypic_ext = explode('.',$displaypic);
+        $displaypic_ext_check = strtolower(end($displaypic_ext));
+        $valid_displaypic_ext = array('png','jpg','jpeg');
+        $displaypicnewname = "bp_".date("dmyhis").'.'.$displaypic_ext_check;
+
+        if(in_array($displaypic_ext_check,$valid_displaypic_ext)){
+            
+
+        }
+        else{
+            ?>
+            <script>
+                alert("please choose proper file type !! for display picture jpg , jpeg , png !!");
+            </script>
+            <?php
+        }
+
+        
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -56,7 +112,7 @@
                                     </a>
 
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item active" href="MyProfile.php">My Profile</a>
+                                        <a class="dropdown-item active" href="UserProfile.php">My Profile</a>
                                         <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                         <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                         <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -97,7 +153,7 @@
                                         </a>
 
                                         <div id="collapseExample3" class="collapse">
-                                            <a class="dropdown-item active" href="MyProfile.php">My Profile</a>
+                                            <a class="dropdown-item active" href="UserProfile.php">My Profile</a>
                                             <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                             <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                             <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -116,6 +172,11 @@
     </header>
     <!-- End Navigation -->
 
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+
     <!-- My Profile  -->
     <section id="content">
         <div class="container">
@@ -125,29 +186,30 @@
                     <h1 class="heading-1">My Profile</h1>
                 </div>
             </div>
+            <form method="POST" enctype="multipart/form-data">
             <div class="row heading">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="InputFirstName">First Name <span>*</span></label>
-                        <input type="text" class="form-control" id="InputFirstName" value="Harsh"
-                            placeholder="Enter your first name">
+                        <input type="text" name="fname" class="form-control" id="InputFirstName"
+                            placeholder="Enter your first name" value="<?php echo $row['FirstName'] ?>">
                     </div>
 
                     <div class="form-group">
                         <label for="InputLastName">Last Name <span>*</span></label>
-                        <input type="text" class="form-control" id="InputLastName" value="Bhoraniya"
-                            placeholder="Enter your last name">
+                        <input type="text" name="lname" class="form-control" id="InputLastName" 
+                            placeholder="Enter your last name" value="<?php echo $row['LastName'] ?>">
                     </div>
 
                     <div class="form-group">
                         <label for="InputEmail1">Email <span>*</span></label>
-                        <input type="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp"
-                            value="harshbhoraniya@gmail.com" placeholder="Enter your email address">
+                        <input type="email" name="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp"
+                             placeholder="Enter your email address" value="<?php echo $row['EmailID'] ?>">
                     </div>
 
                     <div class="form-group">
                         <label for="InputEmail2">Secondary Email</label>
-                        <input type="email" class="form-control" id="InputEmail2" aria-describedby="emailHelp"
+                        <input type="email" name="semail" class="form-control" id="InputEmail2" aria-describedby="emailHelp"
                             placeholder="Enter your email address">
                     </div>
 
@@ -155,21 +217,30 @@
                         <label for="phoneNo">Phone Number</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <select class="form-control customDropDown-Multiple">
-                                    <option selected>+91</option>
-                                    <option>+92</option>
-                                    <option>+93</option>
-                                    <option>+94</option>
+                                <select name="countrycode" class="form-control customDropDown-Multiple">
+                                    <option selected>Select</option>
+                                    <?php 
+                                        $query = "SELECT * FROM countries";
+                                        $select_type = mysqli_query($connection,$query);
+            
+                                        while($row = mysqli_fetch_assoc($select_type )) {
+                                        $countrycode = $row['CountryCode'];            
+                        
+                                        ?>
+                                            <option value="<?php echo $countrycode;?>" ><?php echo $countrycode; ?></option>
+                                        <?php 
+                                        }
+                                    ?>
                                 </select>
                             </div>
-                            <input id="phoneNo" type="text" class="form-control" placeholder="Enter your phone number">
+                            <input id="phoneNo" name="mobileno" type="text" class="form-control" placeholder="Enter your phone number">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="file-image">Profile Picture</label>
                         <div id="file-upload-form" class="uploader form-group">
-                            <input id="file-upload" type="file" name="fileUpload" class="form-control"
+                            <input id="file-upload" name="dispic" type="file" name="fileUpload" class="form-control"
                                 accept="image/*" />
                             <label for="file-upload" id="file-drag">
                                 <img id="file-image" src="#" alt="Preview" class="hidden">
@@ -193,10 +264,11 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group" style="margin-left: 15px">
-                        <a href="#" id="btn-Submit" class="btn">SUBMIT</a>
+                        <button href="#" name="save" id="btn-Submit" class="btn">SUBMIT</button>
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     </section>
     <!-- End My Profile  -->

@@ -1,3 +1,17 @@
+<?php include "../includes/db.php";
+ob_start();
+session_start();
+?>
+<?php
+    if(!isset($_SESSION['ID'])){
+        ?>
+        <script>
+            location.replace('../FrontPanel/Login.php');
+        </script>
+        <?php
+    }
+    $id = $_SESSION['ID'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,7 +67,7 @@
                                     </a>
 
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                        <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                         <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                         <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                         <a class="dropdown-item active" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -94,7 +108,7 @@
                                         </a>
 
                                         <div id="collapseExample3" class="collapse">
-                                            <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                            <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                             <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                             <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                             <a class="dropdown-item active" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -113,6 +127,11 @@
     </header>
     <!-- End Navigation -->
 
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+
     <!-- Content -->
     <section id="content">
         <div class="container">
@@ -128,6 +147,27 @@
                     <a class="btn btn-general">Search</a>
                 </div>
             </div>
+            <?php
+                if(isset($_GET['page'])){
+                    $page = $_GET['page'];
+                    $page =mysqli_real_escape_string($connection,$page);
+                    $page = htmlentities($page);
+                }
+                else{
+                    $page = 1;
+                }
+                $num_per_page = 5;
+                $start_from = ($page-1) * $num_per_page;
+                $query = "SELECT SN.`Title`, NC.`Name`, SN.`AdminRemarks` FROM `notecategories` AS NC INNER JOIN `sellernotes` AS SN ON SN.`Category` = NC.`NoteCategoryID` WHERE SN.`Status` = '10' and SN.`SellerID` =  '$id'";
+                $select_query = mysqli_query($connection, $query);
+                $total_records = mysqli_num_rows($select_query);
+                $total_pages = ceil($total_records / $num_per_page);
+                $i=1;
+                $k = $num_per_page + $start_from;
+                $srno = 1;
+                if($total_records != 0){
+                
+            ?>
 
             <div class="row">
                 <div class="table-top table-responsive">
@@ -143,11 +183,15 @@
                             </tr>
                         </thead>
                         <tbody>
+                        <?php 
+                        while($row = mysqli_fetch_array($select_query)){
+                            if($start_from<$i){
+                        ?>
                             <tr>
-                                <td class="text-center" scope="row">1</td>
-                                <td class="td-blue">Data Science</td>
-                                <td>Science</td>
-                                <td>Lorem ipsum is simply dummy text</td>
+                                <td class="text-center" scope="row"><?php echo $srno++;?></td>
+                                <td class="td-blue"><?php echo $row['Title']; ?></td>
+                                <td><?php echo $row['Name']; ?></td>
+                                <td><?php echo $row['AdminRemarks']; ?></td>
                                 <td class="td-blue">Clone</td>
                                 <td class="text-center">
                                     <div class="dropdown">
@@ -162,177 +206,14 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="text-center" scope="row">2</td>
-                                <td class="td-blue">Accounts</td>
-                                <td>Commere</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">3</td>
-                                <td class="td-blue">Social Studies</td>
-                                <td>Social</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">4</td>
-                                <td class="td-blue">AI</td>
-                                <td>IT</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">5</td>
-                                <td class="td-blue">Lorem ipsum</td>
-                                <td>Lorem</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">6</td>
-                                <td class="td-blue">Data Science</td>
-                                <td>Science</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">7</td>
-                                <td class="td-blue">Accounts</td>
-                                <td>Commere</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">8</td>
-                                <td class="td-blue">Social Studies</td>
-                                <td>Social</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">9</td>
-                                <td class="td-blue">AI</td>
-                                <td>IT</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center" scope="row">10</td>
-                                <td class="td-blue">Lorem ipsum</td>
-                                <td>Lorem</td>
-                                <td>Lorem ipsum is simply dummy text</td>
-                                <td class="td-blue">Clone</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img src="../images/dots.png" alt="dot-image">
-                                        </a>
-
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Download Notes</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                            <?php
+                                }
+                                $i++;
+                                if($i>$k){
+                                    break;
+                                }
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -341,24 +222,43 @@
             <div class="row text-center">
                 <div class="col-md-12 num">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
+                    <li class="<?php if($page == 1){ echo 'disabled'; }?> page-item">
+                            <a class="page-link" href="MyRejectedNote.php?page=<?php echo $page-1; ?>" aria-label="Previous">
                                 <img src="../images/left-arrow.png" alt="left-arrow">
                             </a>
                         </li>
-                        <li class="page-item"><a class="page-link active" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                        <?php 
+                            for($i=1;$i<=$total_pages;$i++){
+                        ?>
                         <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
+                            <a class="page-link <?php if($page == $i) { echo 'active'; }?>" href="MyDownload.php?page=<?php echo $i ; ?>"><?php echo $i ;?></a>
+                        </li>
+                    
+                        <?php 
+                            }
+                        ?>
+                        <li class="<?php if($page == $total_pages){ echo 'disabled'; }?> page-item">
+                            <a class="page-link" href="MyRejectedNote.php?page=<?php echo $page+1; ?>" aria-label="Next">
                                 <img src="../images/right-arrow.png" alt="right-arrow">
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
+            <?php 
+                }
+                else{
+                    ?>
+
+                    <div class="row">
+                        <div class="col-md-12 text-center no-records">
+                            <h4>No Records Found.</h4>
+                        </div>
+                    </div>
+
+                    <?php
+                }
+            ?>
 
         </div>
     </section>

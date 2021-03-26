@@ -3,8 +3,15 @@
 
 <?php 
     session_start(); 
-    
-
+    if(!isset($_SESSION['ID'])){
+        ?>
+        <script>
+            location.replace('../FrontPanel/Login.php');
+        </script>
+        <?php
+    }
+    $id = $_SESSION['ID'];
+ 
 ?>
 
 
@@ -63,7 +70,7 @@
                                     </a>
 
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                        <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                         <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                         <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                         <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -104,7 +111,7 @@
                                         </a>
 
                                         <div id="collapseExample3" class="collapse">
-                                            <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                            <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                             <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                             <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                             <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -123,6 +130,11 @@
     </header>
     <!-- End Navigation -->
 
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+
     <!-- Content -->
     <section id="content">
         <div class="container">
@@ -138,6 +150,30 @@
                     <a class="btn btn-general">Search</a>
                 </div>
             </div>
+            <?php
+                if(isset($_GET['page'])){
+                    $page =mysqli_real_escape_string($connection, $_GET['page']);
+                    $page = htmlentities($page);
+                }
+                else{
+                    $page = 1;
+                }
+
+                $num_per_page = 5;
+                $start_from = ($page-1) * $num_per_page;
+
+                $query = "SELECT D.`NoteTitle`, D.`NoteCategory`, U.`EmailID`, UP.`CountryCode`, UP.`PhoneNumber`, D.`IsPaid`, D.`PurchasedPrice`, D.`CreatedDate` FROM `user` AS U
+                INNER JOIN `userprofile` AS UP ON UP.`UserID` = U.`UserID` 
+                INNER JOIN `downloads` AS D ON d.`Downloader` = U.`UserID`
+                    WHERE D.`IsSellerHasAllowedDownload` = '0' AND U.`IsEmailVerified` = '1' AND D.`Seller` = '$id' AND D.`IsDeleted` = '0'";
+                $select_query = mysqli_query($connection, $query);
+                $total_records = mysqli_num_rows($select_query);
+                $total_pages = ceil($total_records / $num_per_page);
+                $i=1;
+                $k=  $num_per_page + $start_from;
+                $srno=1;
+                if($total_records != 0){
+            ?>
 
             <div class="row">
                 <div class="table-top table-responsive">
@@ -158,38 +194,22 @@
                         </thead>
                         <tbody>
                         <?php 
-                            if(isset($_GET['page'])){
-                                $page = $_GET['page'];
-                                $page =mysqli_real_escape_string($connection,$page);
-                                $page = htmlentities($page);
-                            }
-                            else{
-                                $page = 1;
-                            }
-
-                            $num_per_page = 2;
-                            $start_from = ($page-1) * $num_per_page;
-
-                            $query = "SELECT * FROM downloads, user WHERE downloads.downloader = user.UserID and IsSellerHasAllowedDownload = 0 AND IsEmailVerified = 1";
-                            $select_query = mysqli_query($connection, $query);
-                            $total_records = mysqli_num_rows($select_query);
-                            $total_pages = ceil($total_records / $num_per_page);
-                            $i=1;
-                            $k= $i * $num_per_page;
-
+                            
                             while($row = mysqli_fetch_array($select_query))
                             {
+                                
+                                if($start_from < $i){
 
                         ?>
                             <tr>
-                                <td class="text-center" scope="row"><?php echo $i; ?></td>
+                                <td class="text-center" scope="row"><?php echo $srno++; ?></td>
                                 <td class="td-blue"><?php echo $row["NoteTitle"] ?></td>
                                 <td><?php echo $row["NoteCategory"] ?></td>
                                 <td><?php echo $row["EmailID"] ?></td>
-                                <td>+91 <?php echo rand(1111111111,9999999999); ?></td>
+                                <td><?php echo $row["CountryCode"] ?><?php echo " " ?><?php echo $row["PhoneNumber"] ?></td>
                                 <td><?php if($row["IsPaid"] == 1){ echo "Paid"; }else{ echo "Free"; } ?></td>
                                 <td>$<?php echo $row["PurchasedPrice"] ?></td>
-                                <td><?php echo $row["AttachmentDownloadedDate"] ?></td>
+                                <td><?php echo $row["CreatedDate"] ?></td>
                                 <td class="text-center">
                                     <img src="../images/eye.png" alt="eye-image">
                                 </td>
@@ -201,16 +221,17 @@
                                         </a>
 
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" href="#">Yes, I Received</a>
+                                            <a class="dropdown-item" name="accept" href="Acceptbook.php?id=<?php echo $downloadid ?>">Yes, I Received</a>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
                             <?php 
+                                }
                                 $i++;
-                                /*if($i>$k){
+                                if($i>$k){
                                     break;
-                                }*/
+                                }
                             }
                             ?>
                         </tbody>
@@ -222,31 +243,44 @@
                 <div class="col-md-12 num">
                     <ul class="pagination justify-content-center">
                         <li class="<?php if($page == 1){ echo 'disabled'; }?> page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
+                            <a class="page-link" href="buyerrequest.php?page=<?php echo $page-1 ; ?>" aria-label="Previous">
                                 <img src="../images/left-arrow.png" alt="left-arrow">
                             </a>
                         </li>
                         <?php 
                             for($i=1;$i<=$total_pages;$i++){
                         ?>
-                        <li class="<?php if($page == $i) { echo 'active'; }?> page-item">
-                            <a class="page-link active" href="buyerrequest.php?page=<?php echo $i ; ?>"><?php echo $i ;?></a>
+                        <li class=" page-item">
+                            <a class="page-link <?php if($page == $i) { echo 'active'; }?>" href="buyerrequest.php?page=<?php echo $i ; ?>"><?php echo $i ;?></a>
                         </li>
                         
                         <?php 
                             }
                         ?>
 
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
+                        <li class="<?php if($page == $total_pages){ echo 'disabled'; }?> page-item">
+                            <a class="page-link" href="buyerrequest.php?page=<?php echo $page+1 ; ?>" aria-label="Next">
                                 <img src="../images/right-arrow.png" alt="right-arrow">
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
-
         </div>
+        <?php
+            }
+            else{
+                ?>
+
+                <div class="row">
+                    <div class="col-md-12 text-center no-records">
+                        <h4>No Records Found.</h4>
+                    </div>
+                </div>
+
+                <?php
+            }
+        ?>
     </section>
     <!-- End Content -->
 

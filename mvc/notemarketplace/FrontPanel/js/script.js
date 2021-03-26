@@ -4,8 +4,17 @@
 
 $(window).on('load', function () { //make sure whole site is loaded
     $('#status').fadeOut();
-    $('#preloader').delay(450).fadeOut('slow');
+    $('#preloader').delay(350).fadeOut('slow');
 });
+
+$(".toggle-password").click(function () {
+    let input = $($(this).attr("toggle"));
+    if (input.attr("type") == "password") {
+      input.attr("type", "text");
+    } else {
+      input.attr("type", "password");
+    }
+  });
 
 
 /* =======================================================================

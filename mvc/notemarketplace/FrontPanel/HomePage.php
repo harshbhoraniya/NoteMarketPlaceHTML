@@ -86,8 +86,8 @@
                                     </a>
 
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">My Profile</a>
-                                        <a class="dropdown-item active" href="MyDownload.php">My Download</a>
+                                        <a class="dropdown-item" href="UserProfile.php">My Profile</a>
+                                        <a class="dropdown-item " href="MyDownload.php">My Download</a>
                                         <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                         <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
                                         <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
@@ -111,7 +111,7 @@
                         <div id="mobile-nav-content">
                         <ul class="nav navig">
                                 <li class="nav-item"><a class="nav-link" href="Search.php">Search Notes</a></li>
-                                <li class="nav-item"><a class="nav-link active" href="AddNotes.php">Sell Your Notes</a>
+                                <li class="nav-item"><a class="nav-link" href="AddNotes.php">Sell Your Notes</a>
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="BuyerRequest.php">Buyer Requests</a>
                                 </li>
@@ -127,8 +127,8 @@
                                         </a>
 
                                         <div id="collapseExample3" class="collapse">
-                                            <a class="dropdown-item" href="MyProfile.php">My Profile</a>
-                                            <a class="dropdown-item active" href="MyDownload.php">My Download</a>
+                                            <a class="dropdown-item" href="UserProfile.php">My Profile</a>
+                                            <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                             <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                             <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
                                             <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
@@ -145,6 +145,11 @@
         </nav>
     </header>
     <!-- End Navigation -->
+
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
 
     <!-- Head -->
     <section id="head">

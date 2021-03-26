@@ -1,5 +1,5 @@
 <?php include "../includes/db.php"; 
-
+$total_records =0;
 
 ?>
 <!DOCTYPE html>
@@ -58,7 +58,7 @@
                                     </a>
 
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                        <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                         <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                         <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                         <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -99,7 +99,7 @@
                                         </a>
 
                                         <div id="collapseExample3" class="collapse">
-                                            <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                            <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                             <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                             <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                             <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -158,33 +158,102 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2 col-sm-6">
-                        <select class="form-control">
+                        <select name="notetype" class="form-control">
                             <option>Select type</option>
+                            <?php
+
+                            $query = "SELECT NT.`Name` FROM `notetype` AS NT";
+                            $select_type = mysqli_query($connection,$query);
+
+                            while($row = mysqli_fetch_assoc($select_type )) {
+                            $type_name = $row['Name'];            
+            
+                            ?>
+                                <option value="<?php echo $type_name;?>"><?php echo $type_name; ?></option>
+                            <?php         
+                            }
+                        ?>
                         </select>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <select class="form-control">
+                        <select name="category" class="form-control">
                             <option>Select category</option>
+                            <?php
+
+                            $query = "SELECT NC.`Name` FROM `notecategories` AS NC";
+                            $select_category = mysqli_query($connection,$query);
+
+                            while($row = mysqli_fetch_assoc($select_category )) {
+                            $category_name = $row['Name'];            
+                                ?>
+                                <option value="<?php echo $category_name;?>"><?php echo $category_name; ?></option>
+                            <?php         
+                            }
+                            ?>
                         </select>
                     </div>
                     <div class="col-md-2 col-sm-6">
                         <select class="form-control">
                             <option>Select university</option>
+                            <?php
+
+                            $query = "SELECT DISTINCT(SN.`UniversityName`) FROM `sellernotes` AS SN";
+                            $select_university = mysqli_query($connection,$query);
+
+                            while($row = mysqli_fetch_assoc($select_university )) {
+                            $university_name = $row['UniversityName'];            
+            
+                            ?>
+                                <option value="<?php echo $university_name;?>"><?php echo $university_name; ?></option>
+                            <?php          
+                            }
+                            ?>
                         </select>
                     </div>
                     <div class="col-md-2 col-sm-6">
                         <select class="form-control">
                             <option>Select course</option>
+                            <?php
+
+                            $query = "SELECT DISTINCT(SN.`Course`) FROM `sellernotes` AS SN";
+                            $select_course = mysqli_query($connection,$query);
+
+                            while($row = mysqli_fetch_assoc($select_course )) {
+                            $course = $row['Course'];            
+            
+                            ?>
+                                <option value="<?php echo $course;?>"><?php echo $course; ?></option>
+                            <?php          
+                            }
+                            ?>
                         </select>
                     </div>
                     <div class="col-md-2 col-sm-6">
-                        <select class="form-control">
+                        <select name="country" class="form-control">
                             <option>Select country</option>
+                            <?php
+
+                            $query = "SELECT C.`Name` FROM `countries` AS C";
+                            $select_countries = mysqli_query($connection,$query);
+
+                            while($row = mysqli_fetch_assoc($select_countries )) {
+                            $country_name = $row['Name'];            
+            
+                            ?>
+                                <option value="<?php echo $country_name;?>"><?php echo $country_name; ?></option>
+                            <?php          
+                            }
+                            ?>
                         </select>
                     </div>
                     <div class="col-md-2 col-sm-6">
                         <select class="form-control">
                             <option>Select rating</option>
+                            <option value="4">4.0 - 5.0</option>
+                            <option value="3">3.0 - 4.0</option>
+                            <option value="2">2.0 - 3.0</option>
+                            <option value="1">1.0 - 2.0</option>
+                            <option value="0">0.0 - 1.0</option>
                         </select>
                     </div>
                 </div>
@@ -194,44 +263,51 @@
         <div class="row">
             <div class="col-md-12">
                 <?php
-
-        $query = "SELECT * FROM sellernotes";
-        $select_all_post_query = mysqli_query($connection,$query);
-        $count = 0;
-
-        while($row = mysqli_fetch_assoc($select_all_post_query)){
-        $count = $count + 1;
-        }
+        $num_per_page = 15;
+        $query = "SELECT SN.`SellerNoteID`, SN.`SellerID`, SN.`Title`, SN.`UniversityName`, SN.`NumberofPages`, SN.`DisplayPicture`, SN.`PublishedDate` FROM `sellernotes` AS SN";
+        $select_all_notes_query = mysqli_query($connection,$query);
+        $total_records = mysqli_num_rows($select_all_notes_query);
+        $total_pages = ceil($total_records / $num_per_page);
+        if($total_records != 0){
             
     ?>
-                <h1 class="title">Total <?php echo $count?> Notes</h1>
+                <h1 class="title">Total <?php echo $total_records?> Notes</h1>
             </div>
         </div>
 
         <div class="row row-cols-1 row-cols-md-3">
 
             <?php
-
-                $query = "SELECT * FROM sellernotes";
-                $select_all_notes_query = mysqli_query($connection,$query);
-                $count = 0;
+                if(isset($_GET['page'])){
+                    $page = $_GET['page'];
+                    $page =mysqli_real_escape_string($connection,$page);
+                    $page = htmlentities($page);
+                }
+                else{
+                    $page = 1;
+                }
+                $start_from = ($page-1) * $num_per_page;
+                $i=1;
+                $k=  $num_per_page + $start_from;
 
                 while($row = mysqli_fetch_assoc($select_all_notes_query)){
-                    $id = $row['SellerNoteID'];
+
+                    if($start_from < $i){
+                    $sellernoteid = $row['SellerNoteID'];
+                    $sellerid = $row['SellerID'];
                     $note_title = $row['Title'];
                     $note_university = $row['UniversityName'];
                     $note_page = $row['NumberofPages'];
                     $note_image = $row['DisplayPicture'];
-                    $note_publisheddate = $row['PublishedDate'];
-                    $count = $count + 1;
+                    $note_publishedate = $row['PublishedDate'];
                     
                 ?>
 
             
             <div class="col mb-4">
                 <div class="card">
-                    <a href="http://localhost:8080/notemarketplace/frontPanel/Notedetails.php?id=<?php echo $id?>">
-                    <img src="../uplodes/<?php echo $note_image ?>" class="card-img-top" alt="note-image">
+                    <a href="http://localhost:8080/notemarketplace/FrontPanel/Notedetails.php?id=<?php echo $sellernoteid?>">
+                    <img src="../upload/<?php echo $sellerid ?>/<?php echo $sellernoteid ?>/<?php echo $note_image ?>" class="card-img-top" alt="note-image">
                     </a>
                     <div class="card-body">
                         <div class="card-title"><?php echo $note_title ?></div>
@@ -257,14 +333,14 @@
                                     <img src="../images/date.png" alt="images">
                                 </span>
                                 <span class="span-content">
-                                    <?php echo $note_publisheddate ?>
+                                    <?php echo date("Y-m-d", strtotime($note_publishedate)) ?>
                                 </span>
                             </div>
                             <div class="card-content">
                                 <span class="icon-images">
                                     <img src="../images/flag.png" alt="images">
                                 </span>
-                                <span class="span-content text-danger">
+                                <span class="span-content text-danger" style="font-size: 14px;">
                                     5 Users marked this note as inappropriate
                                 </span>
                             </div>
@@ -288,6 +364,11 @@
                 </div>
             </div>
             <?php
+                    }
+                    $i++;
+                    if($i>$k){
+                        break;
+                    }
             }
             ?>
         </div>
@@ -295,25 +376,43 @@
         <div class="row text-center">
             <div class="col-md-12 num">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">
+                    <li class="<?php if($page == 1){ echo 'disabled'; }?> page-item">
+                        <a class="page-link" href="search.php?page=<?php echo $page-1 ; ?>" aria-label="Previous">
                             <img src="../images/left-arrow.png" alt="left-arrow">
                         </a>
                     </li>
-                    <li class="page-item"><a class="page-link active" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item"><a class="page-link" href="#">5</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
+                    <?php 
+                            for($i=1;$i<=$total_pages;$i++){
+                        ?>
+                        <li class="page-item">
+                            <a class="page-link <?php if($page == $i) { echo 'active'; }?>" href="search.php?page=<?php echo $i ; ?>"><?php echo $i ;?></a>
+                        </li>
+                        
+                        <?php 
+                            }
+                        ?>
+                    <li class="<?php if($page == $total_pages){ echo 'disabled'; }?> page-item">
+                        <a class="page-link" href="search.php?page=<?php echo $page+1 ; ?>" aria-label="Next">
                             <img src="../images/right-arrow.png" alt="right-arrow">
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
+        <?php 
+            }
+            else{
+                ?>
 
+                <div class="row">
+                    <div class="col-md-12 text-center no-records">
+                        <h4>No Records Found.</h4>
+                    </div>
+                </div>
+
+                <?php
+            }
+        ?>
     </section>
     <!-- End Search   -->
 

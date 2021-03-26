@@ -55,7 +55,7 @@
                                     </a>
 
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                        <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                         <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                         <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                         <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -96,7 +96,7 @@
                                         </a>
 
                                         <div id="collapseExample3" class="collapse">
-                                            <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                            <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                             <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                             <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                             <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -114,6 +114,11 @@
         </nav>
     </header>
     <!-- End Navigation -->
+
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
 
     <!-- Head -->
     <section class="head">

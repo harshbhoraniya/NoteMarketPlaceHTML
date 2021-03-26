@@ -40,15 +40,15 @@ section {
 }
 
 #status {
-    width: 70px;
-    height: 70px;
-    background-image: url(../images/preloader/preloader.gif);
+    width: 300px;
+    height: 300px;
+    background-image: url(../../images/preloader/preloader.gif);
     background-repeat: no-repeat;
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-top: -35px;
-    margin-left: -35px;
+    margin-top: -120px;
+    margin-left: -75px;
 }
 
 /* =======================================================================
@@ -1251,3 +1251,53 @@ section {
 #signup-box p.signup-done{
     margin-top: 20px;
 }
+
+
+.field-icon {
+    float:right;
+    margin-right: 10px;
+    margin-top: -30px;
+    position: relative;
+    z-index: 2;
+    font-size: 15px;
+}
+
+
+.display {
+    border: 1px solid #838282;
+    display: inline-block;
+    width: 100%;
+    padding: 120px 0 0 0;
+    height: 100px;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: url('../../images/upload.png') center center no-repeat;
+    border-radius: 3px;
+    background-size: 80px 80px;
+}
+
+.upload-notes{
+    border: 1px solid #838282;
+    display: inline-block;
+    width: 100%;
+    padding: 120px 0 0 0;
+    height: 100px;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: url('../../images/upload-note.png') center center no-repeat;
+    border-radius: 3px;
+    background-size: 80px 80px;
+}
+
+
+.no-records{
+    margin: 120px 0 0 0;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 700;
+}
+
+.error{
+    color: red;
+    font-weight: 500;
+}
+

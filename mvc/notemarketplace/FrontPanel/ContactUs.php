@@ -54,7 +54,7 @@
                                     </a>
 
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                        <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                         <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                         <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                         <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -95,7 +95,7 @@
                                         </a>
 
                                         <div id="collapseExample3" class="collapse">
-                                            <a class="dropdown-item" href="MyProfile.php">My Profile</a>
+                                            <a class="dropdown-item" href="UserProfile.php">My Profile</a>
                                             <a class="dropdown-item" href="MyDownload.php">My Download</a>
                                             <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
                                             <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
@@ -113,6 +113,11 @@
         </nav>
     </header>
     <!-- End Navigation -->
+
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
 
     <!-- Head -->
     <section class="head">
@@ -244,46 +249,45 @@ $mail = new PHPMailer(true);
 if(isset($_POST['submit'])){
     $sender_comment = "<b>Hello,<br></b>";
 
-$sender_name    = $_POST['fullname'];
-$sender_email   = $_POST['email'];
-$sender_subject = $_POST['subject'];
-$sender_comment .= $_POST['comment'];
+    $sender_name    = $_POST['fullname'];
+    $sender_email   = $_POST['email'];
+    $sender_subject = $_POST['subject'];
+    $sender_comment .= $_POST['comment'];
 
-$sender_comment .= "<b> <br><br>Regards,<br></b>";
-$sender_comment .= $sender_name;
- 
-try {
-    // Server settings
-    //$mail->SMTPDebug = SMTP::DEBUG_SERVER;        // You can enable this for detailed debug output
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;  // This is fixed port for gmail SMTP
- 
-    $config_email = 'hdrsh19@gmail.com';
-    $mail->Username = $config_email; // YOUR gmail email which will be used as sender and PHPMailer configuration 
-    $mail->Password = 'bhoraniyaharsh';   // YOUR gmail password for above account
- 
-    // Sender and recipient settings
-    $mail->setFrom($config_email, 'Harsh Bhoraniya');  // This email address and name will be visible as sender of email
+    $sender_comment .= "<b> <br><br>Regards,<br></b>";
+    $sender_comment .= $sender_name;
     
- 
-    $mail->addAddress('badboys2811@gmail.com', 'Harsh');  // This email is where you want to send the email
-    $mail->addReplyTo($sender_email, $sender_name);   // If receiver replies to the email, it will be sent to this email address
- 
-    // Setting the email content
-    $mail->IsHTML(true);  // You can set it to false if you want to send raw text in the body
-    $mail->Subject = $sender_subject;       //subject line of email
-    $mail->Body = $sender_comment;   //Email body
-    $mail->AltBody = 'Plain text message body for non-HTML email client. Gmail SMTP email body.';   //Alternate body of email
- 
-    $mail->send();
-    echo "Email message sent.";
-} catch (Exception $e) {
-    echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
-}
+    try {
+        // Server settings
+        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;        // You can enable this for detailed debug output
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;  // This is fixed port for gmail SMTP
+    
+        $config_email = 'hdrsh19@gmail.com';
+        $mail->Username = $config_email; // YOUR gmail email which will be used as sender and PHPMailer configuration 
+        $mail->Password = 'bhoraniyaharsh';   // YOUR gmail password for above account
+    
+        // Sender and recipient settings
+        $mail->setFrom($config_email, 'Harsh Bhoraniya');  // This email address and name will be visible as sender of email
 
+    
+        $mail->addAddress('badboys2811@gmail.com', 'Harsh');  // This email is where you want to send the email
+        $mail->addReplyTo($sender_email, $sender_name);   // If receiver replies to the email, it will be sent to this email address
+    
+        // Setting the email content
+        $mail->IsHTML(true);  // You can set it to false if you want to send raw text in the body
+        $mail->Subject = $sender_subject;       //subject line of email
+        $mail->Body = $sender_comment;   //Email body
+        $mail->AltBody = 'Plain text message body for non-HTML email client. Gmail SMTP email body.';   //Alternate body of email
+    
+        $mail->send();
+        echo "Email message sent.";
+    } catch (Exception $e) {
+        echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
+    }
 }
  
 ?>

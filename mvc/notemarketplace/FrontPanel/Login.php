@@ -10,37 +10,26 @@
         $email  = mysqli_real_escape_string($connection, $email);
         $password  = mysqli_real_escape_string($connection, $password);
         
-        $query = "SELECT * FROM user  WHERE EmailID = '{$email}' and IsEmailVerified = 1";
+        $query = "SELECT U.`UserID`, U.`RoleID`, U.`FirstName`, U.`LastName`, U.`EmailID`, U.`Password`, U.`IsEmailVerified` FROM `user` AS U WHERE U.`EmailID`= '$email' AND U.`IsEmailVerified` = '1'";
         $select_user_query = mysqli_query($connection, $query);
         $emailcount = mysqli_num_rows($select_user_query);
         
         if($emailcount){
-            $fetch_data_array = mysqli_fetch_assoc($select_user_query);
-            $stored_password = $fetch_data_array['Password'];
-            $_SESSION['ID'] = $fetch_data_array['UserID'];
-            $_SESSION['Fname'] = $fetch_data_array['FirstName'];
-            $_SESSION['Lname'] = $fetch_data_array['LastName'];
-            $_SESSION['MailID'] = $fetch_data_array['EmailID'];
-        
-            if($password == $stored_password){
-                if(isset($_POST['rememberme'])){
-                    setcookie('emailidcookie',$Email_ID,time()+10800);
-                    setcookie('passwordcookie',$Password,time()+10800);
-                    if($fetch_data_array['RoleID'] == 2){
-                        ?>
-                            <script>
-                            location.replace('../AdminPanel/Dashboard.php');
-                            </script>
-                        <?php
-                    }else{
-                        ?>
-                            <script>
-                            location.replace('../FrontPanel/Homepage.php');
-                            </script>
-                        <?php
-                    }
-                }else{  
-                    if($fetch_data_array['RoleID'] == 2){
+            $row = mysqli_fetch_array($select_user_query);
+            if($row['IsEmailVerified'] == 1)
+            {
+                $stored_password = $row['Password'];
+                $_SESSION['ID'] = $row['UserID'];
+                $_SESSION['FNAME'] = $row['FirstName'];
+                $_SESSION['LNAME'] = $row['LastName'];
+                $_SESSION['MAILID'] = $row['EmailID'];
+            
+                if($password == $stored_password){
+                    if(isset($_POST['rememberme'])){
+                        setcookie('emailidcookie',$email,time()+10800);
+                        setcookie('passwordcookie',$password,time()+10800);
+                    } 
+                    if($row['RoleID'] == 2){
                         ?>
                             <script>
                             location.replace('../AdminPanel/Dashboard.php');
@@ -54,11 +43,18 @@
                         <?php
                     }
                 }
+                else{
+                    ?>
+                    <script>
+                        alert("Wrong Password");
+                    </script>
+                    <?php
+                }
             }
             else{
                 ?>
                 <script>
-                    alert("Wrong Password");
+                    alert("Please Verify Email.");
                 </script>
                 <?php
             }
@@ -70,6 +66,7 @@
             </script>
             <?php
         }
+        
     }
 
                                       
@@ -91,6 +88,9 @@
     <!-- Favicon-->
     <link rel="shortcut icon" href="../images/favicon.ico">
 
+    <!-- font awesome css -->
+    <link rel="stylesheet" href="css/fontawesome/css/font-awesome.min.css">
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap"
         rel="stylesheet">
@@ -108,6 +108,12 @@
 </head>
 
 <body id="loginScreen">
+
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+
     <!-- Logo -->
     <section id="top-logo">
         <div class="center">
@@ -124,8 +130,18 @@
     <!-- Login Box -->
     <section id="login-box">
         <div class="center">
+        <div class="center">
+            <!-- Logo -->
+            <div class="row logo">
+                <div class="col-md-12">
+                    <img src="../images/top-logo.png" alt="logo" class="img-fluid" />
+                </div>
+            </div>
+        </div>
             <!-- Login Box -->
             <div class="row box">
+            
+
                 <div class="col-md-12 m-0 p-0">
 
                     <!-- Box -->
@@ -146,11 +162,8 @@
                         <div class="form-group">
                             <label for="password">Password</label>
                             <a class="float-right" id="forgot-password" href="ForgetPassword.php">Forgot Password?</a>
-                            <input type="password" name="password" class="form-control" id="password"
-                                placeholder="Enter Your Password" />
-                            <p id="passwordHelp" class="p-0 m-0">
-                                <!-- The password that you've entered is incorrect. -->
-                            </p>
+                            <input type="password" name="password" class="form-control form-control-sm" id="password" placeholder="Enter Your Password" />
+                            <span toggle="#password" class="fa fa-eye-slash fa-eye field-icon toggle-password" onclick="togglepwd()"></span>
                         </div>
 
                         <!-- Remember me -->

@@ -1,5 +1,6 @@
 <?php   include "../includes/db.php";
-
+ob_start();
+session_start();
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -9,31 +10,26 @@ require_once __DIR__ . '../src/Exception.php';
 require_once __DIR__ . '../src/PHPMailer.php';
 require_once __DIR__ . '../src/SMTP.php';
 
-    if(isset($_POST['submit'])){
-        $email = $_POST['email'];
-        $query = "SELECT * FROM user WHERE EmailID = '{$email}'";
-        $select_query = mysqli_query($connection,$query);
-        if(!$select_query){
-            die("FaILED".mysqli_error($connection));
-        }
+$success = false;
 
-        while($row = mysqli_fetch_assoc($select_query)){
+    if(isset($_POST['save'])){
+        $email = mysqli_real_escape_string($connection, $_POST['email']);
+
+        $query = "SELECT U.`UserID`, U.`FirstName` FROM `user` AS U WHERE U.`EmailID` = '$email'";
+        $select_user = mysqli_query($connection, $query);
+        $total_records = mysqli_num_rows($select_user);
+        
+        if($total_records > 0){
+            $row = mysqli_fetch_array($select_user);
+            $user_id = $row['UserID'];
             $user_name = $row['FirstName'];
-        }
 
-        if(mysqli_num_rows($select_query)==0){
-            $invalid_email_error = "This email id is invalid!";
-        }
-        if(mysqli_num_rows($select_query)==1){
-            $password = rand(1000,10000);
-            $query = "UPDATE user SET Password ='{$password}' WHERE EmailID = '{$email}'";
-            $password_change_query = mysqli_query($connection,$query);
+            $password = rand(1000,10000); //Random generated password
+            $query = "UPDATE `user` SET `Password` = '$password' WHERE `UserID` = $user_id";
+            $password_change = mysqli_query($connection, $query);
 
-            if(!$password_change_query ){
-                die("FAILED TO CHANGE YOUR PASSWORD".mysqli_error($connection));
-            }
-            if($password_change_query ){
-
+            if($password_change){
+                $success = true;
                 $mail = new PHPMailer(true);
 
                 try {
@@ -46,7 +42,7 @@ require_once __DIR__ . '../src/SMTP.php';
                     $mail->Port = 587;  // This is fixed port for gmail SMTP
                     $config_email = 'hdrsh19@gmail.com';
                     $mail->Username = $config_email; // YOUR gmail email which will be used as sender and PHPMailer configuration 
-                    $mail->Password = 'bhoraniyaharsh';   // YOUR gmail password for above account
+                    $mail->Password = 'H@rsh1199';   // YOUR gmail password for above account
                     // Sender and recipient settings
                     $mail->setFrom($config_email, 'Harsh');  // This email address and name will be visible as sender of email
                     $mail->addAddress($email, $user_name);  // This email is where you want to send the email
@@ -57,8 +53,17 @@ require_once __DIR__ . '../src/SMTP.php';
                     $mail->Body = "<p><b>Hello,</b></p><p>We have generated a new password for you</p><p>Password : <b>$password</b></p>";   //Email body
                     $mail->AltBody = 'Plain text message body for non-HTML email client. Gmail SMTP email body.';   //Alternate body of email
                     $mail->send();
+                } catch (Exception $e) {
+                    echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
+                }
+            }
 
-        ?>
+        }
+    }
+
+
+?>
+        
 
 
 <!DOCTYPE html>
@@ -86,6 +91,12 @@ require_once __DIR__ . '../src/SMTP.php';
     <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body id="loginScreen">
+
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+    
     <!-- Logo -->
     <section id="top-logo">
         <div class="center">
@@ -114,11 +125,15 @@ require_once __DIR__ . '../src/SMTP.php';
                         </p>
 
                         <div>
-                        <b>
-                            <?php
-                                echo "Email message sent.";
+                        <?php
+                            if($success){
                             ?>
-                        </b>
+                            <div id="success-inform" class="form-group text-center">
+                               <p><img src="../images/Success-Green.png" alt="success-image" style="height: 20px;width: 20px;"> Check your mail for new password.</p>
+                            </div>
+                            <?php
+                            }
+                        ?>
                         </div>
 
                         <!-- Email -->
@@ -128,15 +143,11 @@ require_once __DIR__ . '../src/SMTP.php';
                         </div>
 
                         <!-- Submit Button -->
-                        <button id="submit-btn" name="submit" type="submit"  class="btn"> Submit</button>
+                        <button id="submit-btn" name="save" type="submit"  class="btn"> Submit</button>
 
                         <?php
-                        } catch (Exception $e) {
-                            echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
-                        }
-                        }
-                        }
-                        }
+                        
+                        
                         ?>
                     </form>
                 </div>

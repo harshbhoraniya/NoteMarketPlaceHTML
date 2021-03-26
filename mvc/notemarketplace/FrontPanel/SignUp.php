@@ -13,20 +13,15 @@ require_once __DIR__ . '../src/PHPMailer.php';
 require_once __DIR__ . '../src/SMTP.php';
 
 
+$success = false;
 $msg = "";
-
 
 if(isset($_POST['signup'])){
     $user_email = $_POST['email'];
-    $check = mysqli_num_rows(mysqli_query($connection, "select * from user where EmailID = '{$user_email}'"));
-
+    $check = mysqli_num_rows(mysqli_query($connection, "SELECT U.`EmailID` FROM `user` AS U WHERE U.`EmailID` = '$user_email'"));
+    $currentdate = date("Y-m-d H:m:s");
     if($check>0){
-        ?>
-            <script>
-                alert('email is already Registered.');
-            </script>
-        <?php
-        $msg="";
+        $msg="email is already Registered.";
     }
     else{
         if($_POST['password'] == $_POST['repassword']){
@@ -41,11 +36,11 @@ if(isset($_POST['signup'])){
             //Convert the binary data into hexadecimal representation.
             $token = bin2hex($token);
 
-            $query = "INSERT INTO user (RoleID, FirstName, LastName, EmailID, Password, IsEmailVerified, Token, IsActive) ";
-            $query .= "VALUES('{$user_roleid}','{$user_firstname}','{$user_lastname}','{$user_email}','{$user_password}', 0 , '{$token}', 1 ) ";
+            $query = "INSERT INTO `user` (`RoleID`, `FirstName`, `LastName`, `EmailID`, `Password`, `IsEmailVerified`, `Token`, `IsActive`) VALUES('$user_roleid','$user_firstname','$user_lastname','$user_email','$user_password', '0' , '$token', '1' ) ";
             $create_user_query = mysqli_query($connection, $query);
 
             if($create_user_query){
+                $success = true;
                 $mail = new PHPMailer(true);
 
                     try {
@@ -65,7 +60,7 @@ if(isset($_POST['signup'])){
                         $mail->addReplyTo($config_email, 'Harsh');   // If receiver replies to the email, it will be sent to this email address
                         // Setting the email content
                         $mail->IsHTML(true);  // You can set it to false if you want to send raw text in the body
-                        $mail->Subject = "About verifying emailid for NotesMarketplace";       //subject line of email
+                        $mail->Subject = "About verifying EmailID for NotesMarketplace";       //subject line of email
                         $mail->Body = '<!DOCTYPE html>
                         <html lang="en">
                         <head>
@@ -80,7 +75,7 @@ if(isset($_POST['signup'])){
                             <table style="height:40%;width: 40%; position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);font-family:Open Sans !important;background: #fff;border-radius: 3px;padding-left: 2%;padding-right: 2%;">
                                 <thead>
                                     <th>
-                                        <img src="../images/logo.png" alt="logo" style="margin-top: 5%;">
+                                        <img src="https://i.ibb.co/HVyPwqM/top-logo1.png" alt="logo" style="margin-top: 5%;">
                                     </th>
                                 </thead>
                                 <tbody>
@@ -117,21 +112,11 @@ if(isset($_POST['signup'])){
             {
                 die("Query failed" . mysqli_error($connection));
             }
-            $msg = '<i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;&nbsp;Your account has been successfully created.';
-
-
         }
         else{
-            $msg = ' ';
-                ?>
-                <script>
-                alert('password and confirm password should be equal');
-                </script>
-                <?php
-
+            $msg = "password and confirm password should be equal";
         }
     }
-
 }
 
 ?>
@@ -208,8 +193,21 @@ if(isset($_POST['signup'])){
                         <p id="text-login" class="text-center">
                             Enter your details to signup
                         </p>
-                        <p class="signup-done"><?php echo $msg; ?></p>
-
+                        <?php
+                            if($success){
+                            ?>
+                            <div id="success-inform" class="form-group text-center">
+                            <p><img src="../images/Success-Green.png" alt="success-image" style="height: 20px;width: 20px;"> Your
+                                account has been succesdfully created.</p>
+                            </div>
+                            <?php
+                            }
+                            ?>
+                            <div class="text-center error" style="color:red;">
+                                <p><?php echo $msg; ?></p>
+                            </div>
+                            <?php
+                        ?>
                         <!-- First Name -->
                         <div class="form-group">
                             <label for="first-name-1">First Name <span>*</span></label>

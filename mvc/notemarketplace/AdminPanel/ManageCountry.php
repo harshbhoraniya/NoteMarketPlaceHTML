@@ -1,3 +1,9 @@
+<?php include "../includes/db.php";
+ob_start();
+session_start();
+
+    $id = $_SESSION['ID'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -183,7 +189,29 @@
                     <a class="btn btn-general" role="button">Search</a>
                 </div>
             </div>
+            <?php
+                if(isset($_GET['page'])){
+                    $page = mysqli_real_escape_string($connection, $_GET['page']);
+                    $page = htmlentities($page);
+                }
+                else{
+                    $page = 1;
+                }
 
+                $num_per_page = 5;
+                $start_from = ($page-1) * $num_per_page;
+
+                $query = "SELECT U.FirstName AS FirstName, U.LastName AS LastName, C.CountryID AS CountryID , C.Name AS CountryName, C.CountryCode AS CountryCode, C.CreatedDate AS CreatedDate, C.IsActive as IsActive FROM user AS U 
+                            INNER JOIN countries AS C ON c.CreatedBy = U.UserID
+                                WHERE C.IsDeleted = '0'";
+                $select_country = mysqli_query($connection, $query);
+                $total_records = mysqli_num_rows($select_country);
+                $total_pages = ceil($total_records / $num_per_page);
+                $i=1;
+                $k = $num_per_page + $start_from;
+                $srno = 1;
+                if($total_records != 0){
+            ?>
             <div class="row">
                 <div class="table-top table-responsive">
                     <table class="table">
@@ -199,66 +227,33 @@
                             </tr>
                         </thead>
                         <tbody>
+                        <?php
+                            while($row = mysqli_fetch_array($select_country)){
+                                if($start_from<$i){
+                                    $country_id = $row['CountryID'];
+                            
+                        ?>
                             <tr>
-                                <td scope="row" class="text-center">1</td>
-                                <td class="text-center">India</td>
-                                <td class="text-center">11</td>
-                                <td class="text-center">09-10-2020, 10:10</td>
-                                <td class="text-center">Khyati Patel</td>
-                                <td class="text-center">Yes</td>
+                                <td scope="row" class="text-center"><?php echo $srno++; ?></td>
+                                <td class="text-center"><?php echo $row['CountryName']; ?></td>
+                                <td class="text-center"><?php echo $row['CountryCode']; ?></td>
+                                <td class="text-center"><?php echo $row['CreatedDate']; ?></td>
+                                <td class="text-center"><?php echo $row['FirstName']; echo " "; echo $row['LastName']; ?></td>
+                                <td class="text-center"><?php if($row["IsActive"] == 1){ echo "Yes"; }else{ echo "No"; } ?></td>
                                 <td class="text-center">
-                                    <img src="../images/edit.png" alt="edit-image">
-                                    <img src="../images/delete.png" alt="delete-image">
+                                    <a href="../AdminPanel/AddCountry.php?id=<?php echo $country_id;?>"><img src="../images/edit.png" alt="edit-image"></a>
+                                    <a><img src="../images/delete.png" alt="delete-image"></a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td scope="row" class="text-center">2</td>
-                                <td class="text-center">Australia</td>
-                                <td class="text-center">24</td>
-                                <td class="text-center">10-10-2020, 11:25</td>
-                                <td class="text-center">Rahul Shah</td>
-                                <td class="text-center">Yes</td>
-                                <td class="text-center">
-                                    <img src="../images/edit.png" alt="edit-image">
-                                    <img src="../images/delete.png" alt="delete-image">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td scope="row" class="text-center">3</td>
-                                <td class="text-center">USA</td>
-                                <td class="text-center">04</td>
-                                <td class="text-center">11-10-2020, 01:00</td>
-                                <td class="text-center">Suman Trivedi</td>
-                                <td class="text-center">No</td>
-                                <td class="text-center">
-                                    <img src="../images/edit.png" alt="edit-image">
-                                    <img src="../images/delete.png" alt="delete-image">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td scope="row" class="text-center">4</td>
-                                <td class="text-center">United Kingdom</td>
-                                <td class="text-center">12</td>
-                                <td class="text-center">12-10-2020, 10:10</td>
-                                <td class="text-center">Raj Malhotra</td>
-                                <td class="text-center">Yes</td>
-                                <td class="text-center">
-                                    <img src="../images/edit.png" alt="edit-image">
-                                    <img src="../images/delete.png" alt="delete-image">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td scope="row" class="text-center">5</td>
-                                <td class="text-center">Canada</td>
-                                <td class="text-center">13</td>
-                                <td class="text-center">13-10-2020, 11:25</td>
-                                <td class="text-center">Niya Patel</td>
-                                <td class="text-center">No</td>
-                                <td class="text-center">
-                                    <img src="../images/edit.png" alt="edit-image">
-                                    <img src="../images/delete.png" alt="delete-image">
-                                </td>
-                            </tr>
+                            <?php
+                                }
+                                $i++;
+                                if($i>$k){
+                                    break;
+                                }
+                            }
+                        }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -267,18 +262,23 @@
             <div class="row text-center">
                 <div class="col-md-12 num">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
+                    <li class="<?php if($page == 1){ echo 'disabled'; }?> page-item">
+                            <a class="page-link" href="ManageCountry.php?page=<?php echo $page-1; ?>" aria-label="Previous">
                                 <img src="../images/left-arrow.png" alt="left-arrow">
                             </a>
                         </li>
-                        <li class="page-item"><a class="page-link active" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                        <?php 
+                            for($i=1;$i<=$total_pages;$i++){
+                        ?>
                         <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
+                            <a class="page-link <?php if($page == $i) { echo 'active'; }?>" href="MyDownload.php?page=<?php echo $i ; ?>"><?php echo $i ;?></a>
+                        </li>
+                        
+                        <?php 
+                            }
+                        ?>
+                        <li class="<?php if($page == $total_pages){ echo 'disabled'; }?> page-item">
+                            <a class="page-link" href="ManageCountry.php?page=<?php echo $page+1; ?>" aria-label="Next">
                                 <img src="../images/right-arrow.png" alt="right-arrow">
                             </a>
                         </li>
@@ -321,3 +321,6 @@
 </body>
 
 </html>
+
+
+<?php  ?>
