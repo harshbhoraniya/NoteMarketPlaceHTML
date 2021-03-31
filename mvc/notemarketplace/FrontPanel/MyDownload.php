@@ -29,6 +29,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
 
+    <link rel="stylesheet" href="css\fontawesome\css\font-awesome.min.css">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 
@@ -196,6 +198,7 @@
 
     <!-- Content -->
     <section id="content">
+        <form action="" method="POST">
         <div class="container">
 
             <div class="row heading">
@@ -204,13 +207,15 @@
                 </div>
 
                 <div class="col-md-6 col-sm-6 text-right search-1 p-0">
-                    <img src="../images/search-icon.png" class="form-control-feedback" alt="search-icon">
-                    <input class="input-search" type="search" placeholder="Search">
-                    <a class="btn btn-general">Search</a>
+                    <input name="search-input" class="input-search fa" type="text" placeholder="&#xf002;   Search">
+                    <button name="search" class="btn btn-general">Search</button>
                 </div>
             </div>
 
             <?php 
+                $select_query = "";
+                
+
                 $id = $_SESSION['ID'];
                 if(isset($_GET['page'])){
                     $page = $_GET['page'];
@@ -223,7 +228,14 @@
                 $num_per_page = 5;
                 $start_from = ($page-1) * $num_per_page;
                 $query = "SELECT D.`NoteTitle`, D.`NoteCategory`, U.`EmailID`, D.`IsPaid`, D.`PurchasedPrice`, D.`AttachmentDownloadedDate`  FROM `user` AS U INNER JOIN downloads AS D ON D.`Downloader` = U.`UserID` WHERE D.`IsSellerHasAllowedDownload` = '1' AND U.`IsEmailVerified` = '1' AND D.`Downloader` = '$id'";
+                if (isset($_POST['search'])) {
+                    $search_result = $_POST['search-input'];
+                    $query .= " AND (D.`NoteTitle` LIKE '%$search_result%' OR D.`NoteCategory` LIKE '%$search_result%' 
+                    OR U.`EmailID` LIKE '%$search_result%' OR D.`IsPaid` LIKE '%$search_result%' 
+                    OR D.`PurchasedPrice` LIKE '%$search_result%')";
+                }
                 $select_query = mysqli_query($connection, $query);
+                
                 $total_records = mysqli_num_rows($select_query);
                 $total_pages = ceil($total_records / $num_per_page);
                 $i=1;
@@ -378,6 +390,7 @@
                     <?php
                 }
         ?>
+        </form>
     </section>
     <!-- End Content -->
 

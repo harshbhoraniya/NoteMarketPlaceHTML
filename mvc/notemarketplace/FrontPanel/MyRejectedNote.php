@@ -134,6 +134,7 @@ session_start();
 
     <!-- Content -->
     <section id="content">
+        <form method="POST">
         <div class="container">
 
             <div class="row heading">
@@ -142,9 +143,8 @@ session_start();
                 </div>
 
                 <div class="col-md-6 col-sm-6 text-right search-1 p-0">
-                    <img src="../images/search-icon.png" class="form-control-feedback" alt="search-icon">
-                    <input class="input-search" type="search" placeholder="Search">
-                    <a class="btn btn-general">Search</a>
+                    <input class="input-search fa" name="search-input" type="text" placeholder="&#xf002; Search">
+                    <button name="search" class="btn btn-general">Search</button>
                 </div>
             </div>
             <?php
@@ -159,6 +159,11 @@ session_start();
                 $num_per_page = 5;
                 $start_from = ($page-1) * $num_per_page;
                 $query = "SELECT SN.`Title`, NC.`Name`, SN.`AdminRemarks` FROM `notecategories` AS NC INNER JOIN `sellernotes` AS SN ON SN.`Category` = NC.`NoteCategoryID` WHERE SN.`Status` = '10' and SN.`SellerID` =  '$id'";
+                if (isset($_POST['search'])) {
+                    $search_result = $_POST['search-input'];
+                    $query .= " AND (SN.`Title` LIKE '%$search_result%' OR NC.`Name` LIKE '%$search_result%' 
+                    OR SN.`AdminRemarks` LIKE '%$search_result%')";
+                }
                 $select_query = mysqli_query($connection, $query);
                 $total_records = mysqli_num_rows($select_query);
                 $total_pages = ceil($total_records / $num_per_page);
@@ -259,8 +264,8 @@ session_start();
                     <?php
                 }
             ?>
-
         </div>
+        </form>
     </section>
 
     <hr>

@@ -133,6 +133,7 @@
 
     <!-- Content -->
     <section id="content">
+        <form method="POST">
         <div class="container">
 
             <div class="row heading">
@@ -141,9 +142,8 @@
                 </div>
 
                 <div class="col-md-6 col-sm-6 text-right search-1 p-0">
-                    <img src="../images/search-icon.png" class="form-control-feedback" alt="search-icon">
-                    <input class="input-search" type="search" placeholder="Search">
-                    <a class="btn btn-general">Search</a>
+                    <input class="input-search" name="search-input" type="search" placeholder="Search">
+                    <button name="search" class="btn btn-general">Search</button>
                 </div>
             </div>
             <?php 
@@ -160,6 +160,14 @@
                 $start_from = ($page-1) * $num_per_page;
 
                 $query = "SELECT D.`NoteTitle`, D.`NoteCategory`, U.`EmailID`, UP.`CountryCode`, UP.`PhoneNumber`, D.`IsPaid`, D.`PurchasedPrice`, D.`AttachmentDownloadedDate` FROM `user` AS U INNER JOIN `userprofile` AS UP ON UP.`UserID` = U.`UserID` INNER JOIN `downloads` AS D ON d.`Downloader` = U.`UserID` WHERE D.`IsSellerHasAllowedDownload` = '1' AND U.`IsEmailVerified` = '1' AND D.`Seller` = '$id'";
+                if (isset($_POST['search'])) {
+                    $search_result = $_POST['search-input'];
+                    $query .= " AND (D.`NoteTitle` LIKE '%$search_result%' OR D.`NoteCategory` LIKE '%$search_result%' 
+                    OR U.`EmailID` LIKE '%$search_result%' OR UP.`CountryCode` LIKE '%$search_result%' 
+                    OR UP.`PhoneNumber` LIKE '%$search_result%'
+                    OR D.`IsPaid` LIKE '%$search_result%' 
+                    OR D.`PurchasedPrice` LIKE '%$search_result%')";
+                }
                 $select_query = mysqli_query($connection, $query);
                 $total_records = mysqli_num_rows($select_query);
                 $total_pages = ceil($total_records / $num_per_page);
@@ -272,6 +280,7 @@
                 <?php
             }
         ?>
+        </form>
     </section>
 
     <hr>
