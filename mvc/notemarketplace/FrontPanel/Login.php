@@ -10,7 +10,7 @@
         $email  = mysqli_real_escape_string($connection, $email);
         $password  = mysqli_real_escape_string($connection, $password);
         
-        $query = "SELECT U.`UserID`, U.`RoleID`, U.`FirstName`, U.`LastName`, U.`EmailID`, U.`Password`, U.`IsEmailVerified` FROM `user` AS U WHERE U.`EmailID`= '$email' AND U.`IsEmailVerified` = '1'";
+        $query = "SELECT U.`UserID`, U.`RoleID`, U.`FirstName`, U.`LastName`, U.`EmailID`, U.`Password`, U.`IsEmailVerified` FROM `user` AS U WHERE U.`EmailID`= '$email' AND U.`IsEmailVerified` = '1' AND U.`IsActive` = '1' AND U.`IsDeleted` = '0'";
         $select_user_query = mysqli_query($connection, $query);
         $emailcount = mysqli_num_rows($select_user_query);
         
@@ -20,6 +20,7 @@
             {
                 $stored_password = $row['Password'];
                 $_SESSION['ID'] = $row['UserID'];
+                $_SESSION['ROLEID'] = $row['RoleID'];
                 $_SESSION['FNAME'] = $row['FirstName'];
                 $_SESSION['LNAME'] = $row['LastName'];
                 $_SESSION['MAILID'] = $row['EmailID'];

@@ -1,10 +1,99 @@
+<?php include "../includes/db.php";
+ob_start();
+session_start();
+    if(isset($_GET['id'])){
+        $type_id = $_GET['id'];
+    }
+    $user_id = $_SESSION['ID'];
+?>
+
+<?php
+    if(!empty($type_id)){
+        $query = "SELECT NT.`Name`, NT.`Description` FROM `notetype` AS NT
+                    WHERE NT.`NoteTypeID` = '$type_id'";
+        $selecy_country = mysqli_query($connection, $query);
+        $row = mysqli_fetch_array($selecy_country);
+    }
+?>
+<?php 
+$process = "";
+    if(empty($type_id)){ 
+        $process = "add";
+    }else{ 
+        $process = "edit";
+    }
+$valid = true;
+$errors = array();
+
+    if(isset($_POST['save'])){
+        if(empty($_POST['name'])){
+            $valid = false;
+            $errors['name'] = "You must enter type name";
+        }
+        else{
+            $name = mysqli_real_escape_string($connection, $_POST['name']);
+        }
+
+        if(empty($_POST['description'])){
+            $valid = false;
+            $errors['description'] = "You must enter description";
+        }
+        else{
+            $description = mysqli_real_escape_string($connection, $_POST['description']);
+        }
+        $currentdate = date("Y-m-d H:m:s");
+
+        if($valid){
+            if($process == 'add'){
+                $query = "INSERT INTO `notetype`(`Name`, `Description`, `CreatedDate`, `CreatedBy`, `ModifiedDate`, `ModifiedBy`, `IsActive`) VALUES ('$name', '$description', '$currentdate', '$user_id', '$currentdate', '$user_id', '1')";
+                $insert_country = mysqli_query($connection, $query);
+                if($insert_country){
+                    ?>
+                        <script>
+                            alert("Type added !!");
+                            location.replace('../AdminPanel/ManageType.php');
+                        </script>
+                    <?php
+                }
+                else{
+                    ?>
+                        <script>
+                            alert("Type added faild!!");
+                        </script>
+                    <?php
+                }
+            }
+            else{
+                $query = "UPDATE `notetype` SET `Name` = '$name', `Description` = '$description', `ModifiedDate` = '$currentdate', `ModifiedBy` = '$user_id', `IsActive` = '1' WHERE `NoteTypeID` = '$type_id'";
+                $update_country = mysqli_query($connection, $query);
+                if($update_country){
+                    ?>
+                        <script>
+                            alert("Type updated !!");
+                            location.replace('../AdminPanel/ManageType.php');
+                        </script>
+                    <?php
+                }
+                else{
+                    ?>
+                        <script>
+                            alert("Type updated faild!!");
+                        </script>
+                    <?php
+                }
+            }
+        }
+    }
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Type | Notes Marketplace</title>
+    <title><?php if(empty($type_id)){ echo "Add ";} else{ echo "Edit ";} ?>Type | Notes Marketplace</title>
 
     <!-- Favicon-->
     <link rel="shortcut icon" href="../images/favicon.ico">
@@ -25,159 +114,32 @@
 
 <body>
     <!-- Navigation -->
-    <header>
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container p-0">
-                <div class="row">
-
-                    <!-- Logo -->
-                    <div class="col-md-4 navbar-header">
-                        <a class="navbar-brand text-left" href="Dashboard.php">
-                            <img src="../images/logo.png" alt="logo">
-                        </a>
-                    </div>
-
-                    <!-- Link -->
-                    <div class="text-right col-md-8 collapse navbar-collapse p-0" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><a class="nav-link" href="Dashboard.php">Dashboard</a></li>
-                            <li class="nav-item dropdown">
-                                <a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" class="nav-link nav-link-custom">
-                                    Notes
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="NoteUnderReview.php">Notes Under Review</a>
-                                    <a class="dropdown-item" href="PublishedNote.php">Published Notes</a>
-                                    <a class="dropdown-item" href="DownloadedNote.php">Downloaded Notes</a>
-                                    <a class="dropdown-item" href="RejectedNote.php">Rejected Notes</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="Members.php">Members</a></li>
-                            <li class="nav-item"><a class="nav-link" href="SpamReports.php">Reports</a></li>
-                            <li class="nav-item dropdown">
-                                <a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" class="nav-link nav-link-custom">
-                                    Setting
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="ManageSyatemConfiguration.php">Manage System
-                                        Configuration</a>
-                                    <a class="dropdown-item" href="ManageAdministrator.php">Manage Administrator</a>
-                                    <a class="dropdown-item" href="ManageCategory.php">Manage Category</a>
-                                    <a class="dropdown-item" href="ManageType.php">Manage Type</a>
-                                    <a class="dropdown-item" href="ManageCountry.php">Manage Countries</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <div class="dropdown">
-                                    <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                        <img src="../images/reviewer-1.png" width="30" height="30" alt="user-image"
-                                            class="d-inline-block align-top avatar-header rounded-circle">
-                                    </a>
-
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">Update Profile</a>
-                                        <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                        <a class="dropdown-item btn-logout" href="Login.php">LogOut</a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="Login.php">LogOut</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Mobile link -->
-                    <div class="mobile-nav col-md-8 text-right">
-                        <img src="../images/menu.png" alt="menu" id="mobile-nav-open-btn" class="text-right">
-                    </div>
-
-                    <div id="mobile-nav" class="text-left">
-                        <span id="mobile-nav-close-btn">
-                            <img src="../images/xmark.png" alt="close-image">
-                        </span>
-                        <div id="mobile-nav-content">
-                            <ul class="nav navig">
-                                <li class="nav-item"><a class="nav-link" href="Dashboard.php">Dashboard</a></li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample1" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample1"
-                                        class="nav-link nav-link-custom">
-                                        Notes
-                                    </a>
-
-                                    <div id="collapseExample1" class="collapse">
-                                        <a class="dropdown-item" href="NoteUnderReview.php">Notes Under Review</a>
-                                        <a class="dropdown-item" href="PublishedNote.php">Published Notes</a>
-                                        <a class="dropdown-item" href="DownloadedNote.php">Downloaded Notes</a>
-                                        <a class="dropdown-item" href="RejectedNote.php">Rejected Notes</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="Members.php">Members</a></li>
-                                <li class="nav-item"><a class="nav-link" href="SpamReports.php">Reports</a></li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample2" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample2"
-                                        class="nav-link nav-link-custom">
-                                        Setting
-                                    </a>
-
-                                    <div id="collapseExample2" class="collapse">
-                                        <a class="dropdown-item" href="ManageSyatemConfiguration.php">Manage System
-                                            Configuration</a>
-                                        <a class="dropdown-item" href="ManageAdministrator.php">Manage
-                                            Administrator</a>
-                                        <a class="dropdown-item" href="ManageCategory.php">Manage Category</a>
-                                        <a class="dropdown-item" href="ManageType.php">Manage Type</a>
-                                        <a class="dropdown-item" href="ManageCountry.php">Manage Countries</a>
-
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample3" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample3"
-                                        class="nav-link nav-link-custom">
-                                        <img src="../images/reviewer-1.png" width="30" height="30" alt="user-image"
-                                            class="d-inline-block align-top avatar-header rounded-circle">
-                                    </a>
-
-                                    <div id="collapseExample3" class="collapse">
-                                        <a class="dropdown-item" href="MyProfile.php">Update Profile</a>
-                                        <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                        <a class="dropdown-item btn-logout" href="Login.php">LogOut</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="Login.php">LogOut</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <?php include "includes/header.php"; ?>
     <!-- End Navigation -->
 
     <!-- Add Type  -->
     <section id="content">
         <div class="container">
-            <form>
+            <form method="POST">
                 <!-- Add Type Details -->
                 <div class="row heading">
                     <div class="col-md-12 p-0">
-                        <h1 class="heading-1">Add Type</h1>
+                        <h1 class="heading-1"><?php if(empty($type_id)){ echo "Add ";} else{ echo "Edit ";} ?>Type</h1>
                     </div>
                 </div>
+                <?php if(!$valid):?>
+                <div class="error" style="color: red;">
+                    <?php foreach($errors as $message):?>
+                        <div><?php echo htmlspecialchars($message); ?></div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="InputType">Type <span>*</span></label>
-                            <input type="text" class="form-control" id="InputType" value="IT"
-                                placeholder="Enter your type">
+                            <input type="text" name="name" class="form-control" id="InputType"
+                                placeholder="Enter your type" value="<?php if(!empty($type_id)){ echo $row['Name'];} ?>">
                         </div>
                     </div>
                 </div>
@@ -185,8 +147,8 @@
                     <div class="col-md-6">
                         <div class="form-group mb-0 p-0">
                             <label for="description">Description <span>*</span></label>
-                            <textarea type="text" class="form-control" id="description"
-                                placeholder="Enter your description" rows="5"></textarea>
+                            <textarea type="text" name="description" class="form-control" id="description"
+                                placeholder="Enter your description" rows="5" ><?php if(!empty($type_id)){ echo $row['Description'];} ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -194,7 +156,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <a href="#" id="btnSubmit" class="btn">SUBMIT</a>
+                            <button href="#" name="save" id="btnSubmit" class="btn">SUBMIT</button>
                         </div>
                     </div>
                 </div>
@@ -206,20 +168,7 @@
     <hr class="p-0 m-0">
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <!-- Copyright -->
-                <div class="col-md-6 col-sm-2 foot-text text-left">
-                    <p>Version : 1.1.24</p>
-                </div>
-                <!-- Social Icon -->
-                <div class="col-md-6 col-sm-10 foot-text col-sm-4 text-right">
-                    <p>Copyright &copy; TatvaSoft All Rights Reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include "includes/footer.php"; ?>
     <!-- End Footer -->
 
     <!-- JavaScript -->
@@ -234,3 +183,7 @@
 </body>
 
 </html>
+
+<?php 
+    
+?>

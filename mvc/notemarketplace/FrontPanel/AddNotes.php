@@ -101,7 +101,7 @@
 
         if(in_array($displaypic_ext_check,$valid_displaypic_ext) && in_array($uploadnote_ext_check,$valid_uploadnote_ext) && in_array($preview_ext_check,$valid_preview_ext) ) {
 
-            $query = "INSERT INTO sellernotes(SellerID, Status, ActionedBy, Title, Category, DisplayPicture, NoteType, NumberofPages, Description, UniversityName, Country, Course, CourseCode, Professor, IsPaid, SellingPrice, NotesPreview, CreatedDate, CreatedBy, ModifiedDate, ModifiedBy, IsActive) 
+            $query = "INSERT INTO `sellernotes`(`SellerID`, `Status`, `ActionedBy`, `Title`, `Category`, `DisplayPicture`, `NoteType`, `NumberofPages`, `Description`, `UniversityName`, `Country`, `Course`, `CourseCode`, `Professor`, `IsPaid`, `SellingPrice`, `NotesPreview`, `CreatedDate`, `CreatedBy`, `ModifiedDate`, `ModifiedBy`, `IsActive`) 
                             VALUES ('$loginID','6','$loginID','$title','$category','$displaypicnewname','$type','$pages','$description','$institute','$country' , '$course', '$coursecode', '$professor', '$sellfor', '$price', '$previewnewname', '$currentdate', '$loginID', '$currentdate', '$loginID', '$isactive')";
             $insert_note = mysqli_query($connection, $query);
             $noteid = mysqli_insert_id($connection);
@@ -130,7 +130,7 @@
                 $uploadnote_dest = '../upload/'.$loginID.'/'.$noteid.'/Attachment'.'/'.$uploadnotenewname;
                 move_uploaded_file($uploadnotepath[$i],$uploadnote_dest);
             
-                $query ="INSERT INTO sellernotesattachements( NoteID , FileName , FilePath ,CreatedDate, CreatedBy, ModifiedDate, ModifiedBy, IsActive) 
+                $query ="INSERT INTO `sellernotesattachements`( `NoteID` , `FileName` , `FilePath` ,`CreatedDate`, `CreatedBy`, `ModifiedDate`, `ModifiedBy`, `IsActive`) 
                                 VALUES ('$noteid','$uploadnotenewname','$uploadnote_dest', '$currentdate', '$loginID', '$currentdate', '$loginID', 1 )";
                 $insert_attechment= mysqli_query($connection,$query);
                 $attachmentid = mysqli_insert_id($connection);
@@ -170,9 +170,7 @@
                 $noteid = $_SESSION['noteid'];
                 $note_title = $_SESSION['notetitle'];
                 $seller_name = $_SESSION['FNAME'];
-                $seller_name = ." ";
-                $seller_name = $_SESSION['LNAME'];
-                $query = "UPDATE `sellernotes` SET Status = 7, `ModifiedDate` = '$currentdate', `ModifiedBy` = '$loginID' WHERE `SellerNoteID` = '$noteid'";
+                $query = "UPDATE `sellernotes` SET `Status` = 7, `ModifiedDate` = '$currentdate', `ModifiedBy` = '$loginID' WHERE `SellerNoteID` = '$noteid'";
                 $uquery = mysqli_query($connection, $query);
 
                 $mail = new PHPMailer(true);
@@ -299,94 +297,7 @@
 <body>
 
     <!-- Navigation -->
-    <header>
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container p-0">
-                <div class="row">
-
-                    <!-- Logo -->
-                    <div class="col-md-3 navbar-header">
-                        <a class="navbar-brand text-left" href="HomePage.php">
-                            <img src="../images/logo.png" alt="logo">
-                        </a>
-                    </div>
-
-                    <!-- Link -->
-                    <div class="text-right col-md-9 collapse navbar-collapse p-0" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><a class="nav-link" href="Search.php">Search Notes</a></li>
-                            <li class="nav-item"><a class="nav-link active" href="AddNotes.php">Sell Your Notes</a>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="BuyerRequest.php">Buyer Requests</a></li>
-                            <li class="nav-item"><a class="nav-link" href="FAQ.php">FAQ</a></li>
-                            <li class="nav-item"><a class="nav-link" href="ContactUs.php">Contact Us</a></li>
-                            <li class="nav-item">
-                                <div class="dropdown">
-                                    <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                        <img src="../images/reviewer-1.png" width="30" height="30" alt="user-image"
-                                            class="d-inline-block align-top avatar-header rounded-circle">
-                                    </a>
-
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="UserProfile.php">My Profile</a>
-                                        <a class="dropdown-item" href="MyDownload.php">My Download</a>
-                                        <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
-                                        <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
-                                        <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                        <a class="dropdown-item btn-logout" href="Logout.php">LogOut</a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="Login.php">LogOut</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Mobile link -->
-                    <div class="mobile-nav col-md-8 text-right">
-                        <img src="../images/menu.png" alt="menu" id="mobile-nav-open-btn" class="text-right">
-                    </div>
-
-                    <div id="mobile-nav" class="text-left">
-                        <span id="mobile-nav-close-btn">
-                            <img src="../images/xmark.png" alt="close-image">
-                        </span>
-                        <div id="mobile-nav-content">
-                            <ul class="nav navig">
-                                <li class="nav-item"><a class="nav-link" href="Search.php">Search Notes</a></li>
-                                <li class="nav-item"><a class="nav-link active" href="AddNotes.php">Sell Your Notes</a>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="BuyerRequest.php">Buyer Requests</a>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="FAQ.php">FAQ</a></li>
-                                <li class="nav-item"><a class="nav-link" href="ContactUs.php">Contact Us</a></li>
-                                <li class="nav-item">
-                                    <div class="dropdown">
-                                        <a href="#collapseExample3" data-toggle="collapse" role="button"
-                                            aria-expanded="false" aria-controls="collapseExample3"
-                                            class="nav-link nav-link-custom">
-                                            <img src="../images/reviewer-1.png" width="30" height="30" alt="user-image"
-                                                class="d-inline-block align-top avatar-header rounded-circle">
-                                        </a>
-
-                                        <div id="collapseExample3" class="collapse">
-                                            <a class="dropdown-item" href="UserProfile.php">My Profile</a>
-                                            <a class="dropdown-item" href="MyDownload.php">My Download</a>
-                                            <a class="dropdown-item" href="MySoldNote.php">My Sold Notes</a>
-                                            <a class="dropdown-item" href="MyRejectedNote.php">My Rejected Notes</a>
-                                            <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                            <a class="dropdown-item btn-logout" href="Logout.php">LogOut</a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="Login.php">LogOut</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <?php include "includes/header.php"; ?>
     <!-- End Navigation -->
 
     <!-- preloader -->
@@ -433,7 +344,7 @@
                             <option selected>Select your category</option>
                             <?php
 
-                            $query = "SELECT * FROM notecategories";
+                            $query = "SELECT NC.`NoteCategoryID`, NC.`Name` FROM `notecategories` AS NC WHERE NC.`IsDeleted` = '0'";
                             $select_category = mysqli_query($connection,$query);
 
                             while($row = mysqli_fetch_assoc($select_category )) {
@@ -462,7 +373,7 @@
                             <option selected>Select your category</option>
                         <?php
 
-                            $query = "SELECT * FROM notetype";
+                            $query = "SELECT NT.`NoteTypeID`, NT.`Name` FROM `notetype` AS NT WHERE NT.`IsDeleted` = '0'";
                             $select_type = mysqli_query($connection,$query);
 
                             while($row = mysqli_fetch_assoc($select_type )) {
@@ -509,7 +420,7 @@
                             <option selected>Select your country</option>
                             <?php
 
-                            $query = "SELECT * FROM countries";
+                            $query = "SELECT C.`CountryID`, C.`Name` FROM `countries` AS C WHERE C.IsDeleted = '0'";
                             $select_countries = mysqli_query($connection,$query);
 
                             while($row = mysqli_fetch_assoc($select_countries )) {
@@ -605,36 +516,7 @@
     <hr>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <!-- Copyright -->
-                <div class="col-md-6 col-sm-8 foot-text text-left">
-                    <p>Copyright &copy; TatvaSoft All Rights Reserved.</p>
-                </div>
-                <!-- Social Icon -->
-                <div class="col-md-6 col-sm-4 foot-icon col-sm-4 text-right">
-                    <ul class="social-list">
-                        <li>
-                            <a href="#">
-                                <img src="../images/facebook.png" alt="facebook-image">
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <img src="../images/twitter.png" alt="twitter-image">
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <img src="../images/linkedin.png" alt="linkedin-image">
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include "includes/footer.php"; ?>
     <!-- End Footer -->
 
     <!-- JavaScript -->

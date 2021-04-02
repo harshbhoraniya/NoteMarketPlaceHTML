@@ -1,3 +1,79 @@
+<?php include "../includes/db.php";
+ob_start();
+session_start();
+    if(isset($_GET['id'])){
+        $admin_id = $_GET['id'];
+    }
+    $user_id = $_SESSION['ID'];
+?>
+<?php
+    if(!empty($admin_id)){
+        $query = "SELECT U.`UserID`, U.`FirstName`, U.`LastName`, U.`EmailID`, UP.`CountryCode`, UP.`PhoneNumber` FROM `userprofile` AS UP 
+        INNER JOIN `user` AS U on U.`UserID` = UP.`UserProfileID`
+            WHERE U.`IsDeleted` = '0' AND U.`UserID` = '$admin_id'";
+        $selecy_country = mysqli_query($connection, $query);
+        $row = mysqli_fetch_array($selecy_country);
+    }
+?>
+<?php 
+$process = "";
+    if(empty($country_id)){ 
+        $process = "add";
+    }else{ 
+        $process = "edit";
+    }
+$valid = true;
+$errors = array();
+
+    if(isset($_POST['save'])){
+        if(empty($_POST['firstname'])){
+            $valid = false;
+            $errors['firstname'] = "You must enter your first name";
+        }
+        else{
+            $fname = mysqli_real_escape_string($connection, $_POST['firstname']);
+            $_SESSION['FNAME'] = $fname;
+        }
+
+        if(empty($_POST['lastname'])){
+            $valid = false;
+            $errors['lastname'] = "You must enter your last name";
+        }
+        else{
+            $lname = mysqli_real_escape_string($connection, $_POST['lastname']);
+            $_SESSION['LNAME'] = $lname;
+        }
+
+        if(empty($_POST['email'])){
+            $valid = false;
+            $errors['email'] = "You must enter your email address";
+        }
+        elseif (!filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL)) {
+            $valid = false;
+            $errors['email'] = "You must enter valid email address";
+        }
+        else{
+            $email = mysqli_real_escape_string($connection, $_POST['email']);
+            $_SESSION['MAILID'] = $email;
+        }
+
+        if(empty($_POST['phoneno'])){
+            $valid = false;
+            $errors['phoneno'] = "You must enter your phone number";
+        }
+        else{
+            $phone = mysqli_real_escape_string($connection, $_POST['phoneno']);
+        }
+        $currentdate = date("Y-m-d H:m:s");
+
+        if($valid){
+        }
+    }
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +82,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0 ,user-scalable=no">
 
-    <title>Add Administrator | Notes Marketplace</title>
+    <title><?php if(empty($admin_id)){ echo "Add ";} else{ echo "Edit ";} ?>Administrator | Notes Marketplace</title>
 
     <!-- Favicon-->
     <link rel="shortcut icon" href="../images/favicon.ico">
@@ -27,187 +103,68 @@
 
 <body>
     <!-- Navigation -->
-    <header>
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container p-0">
-                <div class="row">
-
-                    <!-- Logo -->
-                    <div class="col-md-4 navbar-header">
-                        <a class="navbar-brand text-left" href="HomePage.php">
-                            <img src="../images/logo.png" alt="logo">
-                        </a>
-                    </div>
-
-                    <!-- Link -->
-                    <div class="text-right col-md-8 collapse navbar-collapse p-0" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><a class="nav-link" href="Dashboard.php">Dashboard</a></li>
-                            <li class="nav-item dropdown">
-                                <a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" class="nav-link nav-link-custom">
-                                    Notes
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="NoteUnderReview.php">Notes Under Review</a>
-                                    <a class="dropdown-item" href="PublishedNote.php">Published Notes</a>
-                                    <a class="dropdown-item" href="DownloadedNote.php">Downloaded Notes</a>
-                                    <a class="dropdown-item" href="RejectedNote.php">Rejected Notes</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="Members.php">Members</a></li>
-                            <li class="nav-item"><a class="nav-link" href="SpamReports.php">Reports</a></li>
-                            <li class="nav-item dropdown">
-                                <a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" class="nav-link nav-link-custom">
-                                    Setting
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="ManageSyatemConfiguration.php">Manage System
-                                        Configuration</a>
-                                    <a class="dropdown-item" href="ManageAdministrator.php">Manage Administrator</a>
-                                    <a class="dropdown-item" href="ManageCategory.php">Manage Category</a>
-                                    <a class="dropdown-item" href="ManageType.php">Manage Type</a>
-                                    <a class="dropdown-item" href="ManageCountry.php">Manage Countries</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <div class="dropdown">
-                                    <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                        <img src="../images/reviewer-1.png" width="30" height="30" alt="user-image"
-                                            class="d-inline-block align-top avatar-header rounded-circle">
-                                    </a>
-
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">Update Profile</a>
-                                        <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                        <a class="dropdown-item btn-logout" href="Login.php">LogOut</a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link logout" href="Login.php">LogOut</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Mobile link -->
-                    <div class="mobile-nav col-md-8 text-right">
-                        <img src="../images/menu.png" alt="menu" id="mobile-nav-open-btn" class="text-right">
-                    </div>
-
-                    <div id="mobile-nav" class="text-left">
-                        <span id="mobile-nav-close-btn">
-                            <img src="../images/xmark.png" alt="close-image">
-                        </span>
-                        <div id="mobile-nav-content">
-                            <ul class="nav navig">
-                                <li class="nav-item"><a class="nav-link" href="Dashboard.php">Dashboard</a></li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample1" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample1"
-                                        class="nav-link nav-link-custom">
-                                        Notes
-                                    </a>
-
-                                    <div id="collapseExample1" class="collapse">
-                                        <a class="dropdown-item" href="NoteUnderReview.php">Notes Under Review</a>
-                                        <a class="dropdown-item" href="PublishedNote.php">Published Notes</a>
-                                        <a class="dropdown-item" href="DownloadedNote.php">Downloaded Notes</a>
-                                        <a class="dropdown-item" href="RejectedNote.php">Rejected Notes</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="Members.php">Members</a></li>
-                                <li class="nav-item"><a class="nav-link" href="SpamReports.php">Reports</a></li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample2" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample2"
-                                        class="nav-link nav-link-custom">
-                                        Setting
-                                    </a>
-
-                                    <div id="collapseExample2" class="collapse">
-                                        <a class="dropdown-item" href="ManageSyatemConfiguration.php">Manage System
-                                            Configuration</a>
-                                        <a class="dropdown-item" href="ManageAdministrator.php">Manage
-                                            Administrator</a>
-                                        <a class="dropdown-item" href="ManageCategory.php">Manage Category</a>
-                                        <a class="dropdown-item" href="ManageType.php">Manage Type</a>
-                                        <a class="dropdown-item" href="ManageCountry.php">Manage Countries</a>
-
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample3" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample3"
-                                        class="nav-link nav-link-custom">
-                                        <img src="../images/reviewer-1.png" width="30" height="30" alt="user-image"
-                                            class="d-inline-block align-top avatar-header rounded-circle">
-                                    </a>
-
-                                    <div id="collapseExample3" class="collapse">
-                                        <a class="dropdown-item" href="MyProfile.php">Update Profile</a>
-                                        <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                        <a class="dropdown-item btn-logout
-                                        " href="Login.php">LogOut</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="Login.php">LogOut</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <?php include "includes/header.php"; ?>
     <!-- End Navigation -->
 
     <!-- Add Administrator  -->
     <section id="content">
         <div class="container">
-            <form>
+            <form method="POST">
                 <!-- Add Administrator Details -->
                 <div id="admin-heading" class="row heading">
                     <div class="col-md-12">
-                        <h3 class="heading-1">Add Administrator</h3>
+                        <h3 class="heading-1"><?php if(empty($admin_id)){ echo "Add ";} else{ echo "Edit ";} ?>Administrator</h3>
                     </div>
                 </div>
+                <?php if(!$valid):?>
+                <div class="error" style="color: red;">
+                    <?php foreach($errors as $message):?>
+                        <div><?php echo htmlspecialchars($message); ?></div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
                 <div class="row heading">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="InputFirstName">First Name <span>*</span></label>
-                            <input type="text" class="form-control" id="InputFirstName" value="Harsh"
-                                placeholder="Enter your first name">
+                            <input type="text" name="firstname" class="form-control" id="InputFirstName" 
+                                placeholder="Enter your first name" value="<?php if(!empty($admin_id)){ echo $row['FirstName'];} ?>">
                         </div>
 
                         <div class="form-group">
                             <label for="InputLastName">Last Name <span>*</span></label>
-                            <input type="text" class="form-control" id="InputLastName" value="Bhoraniya"
-                                placeholder="Enter your last name">
+                            <input type="text" name="lastname" class="form-control" id="InputLastName"
+                                placeholder="Enter your last name" value="<?php if(!empty($admin_id)){ echo $row['LastName'];} ?>">
                         </div>
 
                         <div class="form-group">
                             <label for="InputEmail1">Email <span>*</span></label>
-                            <input type="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp"
-                                placeholder="Enter your email address">
+                            <input type="email" name="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp"
+                                placeholder="Enter your email address" value="<?php if(!empty($admin_id)){ echo $row['EmailID'];} ?>">
                         </div>
 
                         <div class="mb-3">
                             <label for="phoneNo">Phone Number</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <select class="form-control customDropDown-Multiple">
-                                        <option selected>+91</option>
-                                        <option>+92</option>
-                                        <option>+93</option>
-                                        <option>+94</option>
+                                    <select name="countrycode" class="form-control customDropDown-Multiple">
+                                        <option>select</option>
+                                        <?php 
+                                        $query = "SELECT C.`CountryCode` FROM `countries` AS C WHERE C.`IsDeleted` = '0' ORDER BY C.`CountryCode` ASC";
+                                        $select_type = mysqli_query($connection,$query);
+                                        $country_code = $row['CountryCode'];
+                                        while($coa = mysqli_fetch_assoc($select_type )) {
+                                        $countrycode = $coa['CountryCode'];            
+                                        
+                                        ?>
+                                            <option value="<?php echo $countrycode;?>" <?php if($country_code == $countrycode){ echo "selected";}  ?>><?php echo $countrycode; ?></option>
+                                        <?php 
+                                        }
+                                    ?>
                                     </select>
                                 </div>
-                                <input id="phoneNo" type="text" class="form-control"
-                                    placeholder="Enter your phone number">
+                                <input id="phoneNo" name="phoneno" type="text" class="form-control"
+                                    placeholder="Enter your phone number" value="<?php if(!empty($admin_id)){ echo $row['PhoneNumber'];} ?>">
                             </div>
                         </div>
                     </div>
@@ -216,7 +173,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group" style="margin-left: 15px">
-                            <a href="#" id="btnSubmit" class="btn">SUBMIT</a>
+                            <button href="#" name="save" id="btnSubmit" class="btn">SUBMIT</button>
                         </div>
                     </div>
                 </div>
@@ -228,20 +185,7 @@
     <hr class="p-0 m-0">
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <!-- Copyright -->
-                <div class="col-md-6 col-sm-2 foot-text text-left">
-                    <p>Version : 1.1.24</p>
-                </div>
-                <!-- Social Icon -->
-                <div class="col-md-6 col-sm-10 foot-text col-sm-4 text-right">
-                    <p>Copyright &copy; TatvaSoft All Rights Reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include "includes/footer.php"; ?>
     <!-- End Footer -->
 
     <!-- JavaScript -->

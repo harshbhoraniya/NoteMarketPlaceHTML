@@ -2,7 +2,13 @@
 ob_start();
 session_start();
 
-    $id = $_SESSION['ID'];
+    if(!isset($_SESSION['ID'])){
+        ?>
+        <script>
+            location.replace('../FrontPanel/Login.php');
+        </script>
+        <?php
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,145 +38,12 @@ session_start();
 <body>
 
     <!-- Navigation -->
-    <header>
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container p-0">
-                <div class="row">
-
-                    <!-- Logo -->
-                    <div class="col-md-4 navbar-header">
-                        <a class="navbar-brand text-left" href="Dashboard.php">
-                            <img src="../images/logo.png" alt="logo">
-                        </a>
-                    </div>
-
-                    <!-- Link -->
-                    <div class="text-right col-md-8 collapse navbar-collapse p-0" id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><a class="nav-link" href="Dashboard.php">Dashboard</a></li>
-                            <li class="nav-item dropdown">
-                                <a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" class="nav-link nav-link-custom">
-                                    Notes
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="NoteUnderReview.php">Notes Under Review</a>
-                                    <a class="dropdown-item" href="PublishedNote.php">Published Notes</a>
-                                    <a class="dropdown-item" href="DownloadedNote.php">Downloaded Notes</a>
-                                    <a class="dropdown-item" href="RejectedNote.php">Rejected Notes</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="Members.php">Members</a></li>
-                            <li class="nav-item"><a class="nav-link" href="SpamReports.php">Reports</a></li>
-                            <li class="nav-item dropdown">
-                                <a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" class="nav-link nav-link-custom">
-                                    Setting
-                                </a>
-
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" href="ManageSyatemConfiguration.php">Manage System
-                                        Configuration</a>
-                                    <a class="dropdown-item" href="ManageAdministrator.php">Manage Administrator</a>
-                                    <a class="dropdown-item" href="ManageCategory.php">Manage Category</a>
-                                    <a class="dropdown-item" href="ManageType.php">Manage Type</a>
-                                    <a class="dropdown-item  active" href="ManageCountry.php">Manage Countries</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <div class="dropdown">
-                                    <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                        <img src="../images/reviewer-1.png" width="30" height="30" alt="user-image"
-                                            class="d-inline-block align-top avatar-header rounded-circle">
-                                    </a>
-
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="MyProfile.php">Update Profile</a>
-                                        <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                        <a class="dropdown-item btn-logout" href="Login.php">LogOut</a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="Login.php">LogOut</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Mobile link -->
-                    <div class="mobile-nav col-md-8 text-right">
-                        <img src="../images/menu.png" alt="menu" id="mobile-nav-open-btn" class="text-right">
-                    </div>
-
-                    <div id="mobile-nav" class="text-left">
-                        <span id="mobile-nav-close-btn">
-                            <img src="../images/xmark.png" alt="close-image">
-                        </span>
-                        <div id="mobile-nav-content">
-                            <ul class="nav navig">
-                                <li class="nav-item"><a class="nav-link" href="Dashboard.php">Dashboard</a></li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample1" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample1"
-                                        class="nav-link nav-link-custom">
-                                        Notes
-                                    </a>
-
-                                    <div id="collapseExample1" class="collapse">
-                                        <a class="dropdown-item" href="NoteUnderReview.php">Notes Under Review</a>
-                                        <a class="dropdown-item" href="PublishedNote.php">Published Notes</a>
-                                        <a class="dropdown-item" href="DownloadedNote.php">Downloaded Notes</a>
-                                        <a class="dropdown-item" href="RejectedNote.php">Rejected Notes</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="Members.php">Members</a></li>
-                                <li class="nav-item"><a class="nav-link" href="SpamReports.php">Reports</a></li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample2" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample2"
-                                        class="nav-link nav-link-custom">
-                                        Setting
-                                    </a>
-
-                                    <div id="collapseExample2" class="collapse">
-                                        <a class="dropdown-item" href="ManageSyatemConfiguration.php">Manage System
-                                            Configuration</a>
-                                        <a class="dropdown-item" href="ManageAdministrator.php">Manage
-                                            Administrator</a>
-                                        <a class="dropdown-item" href="ManageCategory.php">Manage Category</a>
-                                        <a class="dropdown-item" href="ManageType.php">Manage Type</a>
-                                        <a class="dropdown-item  active" href="ManageCountry.php">Manage Countries</a>
-
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#collapseExample3" data-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="collapseExample3"
-                                        class="nav-link nav-link-custom">
-                                        <img src="../images/reviewer-1.png" width="30" height="30" alt="user-image"
-                                            class="d-inline-block align-top avatar-header rounded-circle">
-                                    </a>
-
-                                    <div id="collapseExample3" class="collapse">
-                                        <a class="dropdown-item" href="MyProfile.php">Update Profile</a>
-                                        <a class="dropdown-item" href="ChangePassword.php">Change Password</a>
-                                        <a class="dropdown-item btn-logout" href="Login.php">LogOut</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="Login.php">LogOut</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <?php include "includes/header.php"; ?>
     <!-- End Navigation -->
 
     <!-- Content -->
     <section id="content">
+        <form action="" method="post">
         <div class="container">
 
             <div class="row heading">
@@ -184,9 +57,8 @@ session_start();
                     <a class="btn btn-general" href="AddCountry.php">Add Country</a>
                 </div>
                 <div id="mc" class="col-md-6 col-sm-6 text-right search-1 p-0">
-                    <img src="../images/search-icon.png" class="form-control-feedback" alt="search-icon">
-                    <input class="input-search" type="search" placeholder="Search">
-                    <a class="btn btn-general" role="button">Search</a>
+                    <input class="input-search" name="search-input" type="search" placeholder="Search">
+                    <button name="search" class="btn btn-general">Search</button>
                 </div>
             </div>
             <?php
@@ -201,9 +73,17 @@ session_start();
                 $num_per_page = 5;
                 $start_from = ($page-1) * $num_per_page;
 
-                $query = "SELECT U.FirstName AS FirstName, U.LastName AS LastName, C.CountryID AS CountryID , C.Name AS CountryName, C.CountryCode AS CountryCode, C.CreatedDate AS CreatedDate, C.IsActive as IsActive FROM user AS U 
-                            INNER JOIN countries AS C ON c.CreatedBy = U.UserID
-                                WHERE C.IsDeleted = '0'";
+                $query = "SELECT U.`FirstName` AS FirstName, U.`LastName` AS LastName, C.`CountryID` AS CountryID , C.`Name` AS CountryName, C.`CountryCode` AS CountryCode, C.`CreatedDate` AS CreatedDate, C.`IsActive` as IsActive FROM `user` AS U 
+                            INNER JOIN `countries` AS C ON C.`CreatedBy` = U.`UserID`
+                                WHERE C.`IsDeleted` = '0'";
+                if (isset($_POST['search'])) {
+                    $search_result = $_POST['search-input'];
+                    $query .= " AND ( U.`FirstName` LIKE '%$search_result%' OR U.`LastName` LIKE '%$search_result%' 
+                    OR C.`Name` LIKE '%$search_result%' 
+                    OR C.`CountryCode` LIKE '%$search_result%' 
+                    OR C.`CreatedDate` LIKE '%$search_result%' 
+                    OR C.`IsActive` LIKE '%$search_result%')";
+                }
                 $select_country = mysqli_query($connection, $query);
                 $total_records = mysqli_num_rows($select_country);
                 $total_pages = ceil($total_records / $num_per_page);
@@ -242,7 +122,7 @@ session_start();
                                 <td class="text-center"><?php if($row["IsActive"] == 1){ echo "Yes"; }else{ echo "No"; } ?></td>
                                 <td class="text-center">
                                     <a href="../AdminPanel/AddCountry.php?id=<?php echo $country_id;?>"><img src="../images/edit.png" alt="edit-image"></a>
-                                    <a><img src="../images/delete.png" alt="delete-image"></a>
+                                    <a href="../AdminPanel/DeleteCountry.php?id=<?php echo $country_id;?>"><img src="../images/delete.png" alt="delete-image"></a>
                                 </td>
                             </tr>
                             <?php
@@ -251,8 +131,7 @@ session_start();
                                 if($i>$k){
                                     break;
                                 }
-                            }
-                        }
+                            }                
                             ?>
                         </tbody>
                     </table>
@@ -271,7 +150,7 @@ session_start();
                             for($i=1;$i<=$total_pages;$i++){
                         ?>
                         <li class="page-item">
-                            <a class="page-link <?php if($page == $i) { echo 'active'; }?>" href="MyDownload.php?page=<?php echo $i ; ?>"><?php echo $i ;?></a>
+                            <a class="page-link <?php if($page == $i) { echo 'active'; }?>" href="ManageCountry.php?page=<?php echo $i ; ?>"><?php echo $i ;?></a>
                         </li>
                         
                         <?php 
@@ -285,28 +164,29 @@ session_start();
                     </ul>
                 </div>
             </div>
-
         </div>
+        <?php
+            }
+            else{
+                ?>
+
+                <div class="row">
+                    <div class="col-md-12 text-center no-records">
+                        <h4>No Records Found.</h4>
+                    </div>
+                </div>
+
+                <?php
+            }
+        ?>
+        </form>
     </section>
     <!-- End Content -->
 
     <hr class="p-0 m-0">
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <!-- Copyright -->
-                <div class="col-md-6 col-sm-2 foot-text text-left">
-                    <p>Version : 1.1.24</p>
-                </div>
-                <!-- Social Icon -->
-                <div class="col-md-6 col-sm-10 foot-text text-right">
-                    <p>Copyright &copy; TatvaSoft All Rights Reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include "includes/footer.php"; ?>
     <!-- End Footer -->
 
     <!-- JavaScript -->
