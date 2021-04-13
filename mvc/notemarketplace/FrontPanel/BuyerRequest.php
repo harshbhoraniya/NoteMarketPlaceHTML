@@ -75,7 +75,7 @@
                 $num_per_page = 5;
                 $start_from = ($page-1) * $num_per_page;
 
-                $query = "SELECT D.`NoteTitle`, D.`NoteCategory`, U.`EmailID`, UP.`CountryCode`, UP.`PhoneNumber`, D.`IsPaid`, D.`PurchasedPrice`, D.`CreatedDate` FROM `user` AS U
+                $query = "SELECT D.`DownloadID`, D.`NoteTitle`, D.`NoteCategory`, U.`EmailID`, UP.`CountryCode`, UP.`PhoneNumber`, D.`IsPaid`, D.`PurchasedPrice`, D.`CreatedDate` FROM `user` AS U
                             INNER JOIN `userprofile` AS UP ON UP.`UserID` = U.`UserID` 
                             INNER JOIN `downloads` AS D ON d.`Downloader` = U.`UserID`
                                 WHERE D.`IsSellerHasAllowedDownload` = '0' AND U.`IsEmailVerified` = '1' AND D.`Seller` = '$id' AND D.`IsDeleted` = '0'";
@@ -120,7 +120,7 @@
                             {
                                 
                                 if($start_from < $i){
-
+                                    $downloadid = $row['DownloadID'];
                         ?>
                             <tr>
                                 <td class="text-center" scope="row"><?php echo $srno++; ?></td>
