@@ -23,14 +23,14 @@ require_once __DIR__ . '../src/SMTP.php';
 
     $seller = mysqli_fetch_array(mysqli_query($connection, "SELECT U.`FirstName`, U.`LastName`, U.`EmailID` FROM `user` AS U WHERE U.`UserID` = '$seller_id' AND U.`IsDeleted` = '0'"));
     $seller_name = $seller['FirstName'];
-    $seller_name = ." ";
-    $seller_name = $seller['LastName'];
+    $seller_name .= " ";
+    $seller_name .= $seller['LastName'];
     $seller_mail = $seller['EmailID'];
 
     $buyer = mysqli_fetch_array(mysqli_query($connection, "SELECT U.`FirstName`, U.`LastName`, U.`EmailID` FROM `user` AS U WHERE U.`UserID` = '$downloader' AND U.`IsDeleted` = '0'"));
     $buyer_name = $buyer['FirstName'];
-    $buyer_name = ." ";
-    $buyer_name = $buyer['LastName'];
+    $buyer_name .= " ";
+    $buyer_name .= $buyer['LastName'];
     $buyer_mail = $buyer['EmailID'];
 
     $date = date('Y-m-d H:m:s');
