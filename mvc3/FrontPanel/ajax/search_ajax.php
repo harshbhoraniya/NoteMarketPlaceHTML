@@ -82,13 +82,12 @@
     ?>
             <div class="col mb-4">
                 <div class="card">
-                    <a
-                        href="http://localhost:8080/notemarketplace/FrontPanel/Notedetails.php?id=<?php echo $sellernoteid?>">
+                    <a href="http://localhost:8080/notemarketplace/FrontPanel/Notedetails.php?id=<?php echo $sellernoteid?>">
                         <img src="../upload/<?php echo $sellerid ?>/<?php echo $sellernoteid ?>/<?php echo $note_image ?>"
                             class="card-img-top" alt="note-image">
                     </a>
                     <div class="card-body">
-                        <div class="card-title"><?php echo $note_title ?></div>
+                        <div class="card-title"><a href="http://localhost:8080/notemarketplace/FrontPanel/Notedetails.php?id=<?php echo $sellernoteid?>"><?php echo $note_title ?></a></div>
                         <div class="card-text">
                             <div class="card-content">
                                 <span class="icon-images">
