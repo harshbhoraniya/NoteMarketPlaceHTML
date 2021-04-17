@@ -87,8 +87,7 @@ session_start(); ?>
                                     <td class="text-center ">
                                         <div class="td-action">
                                             <a href="Approve.php?noteid=<?php echo $note_id;?>" name="approve" class="btn btn-action btn-approve">Approve</button>
-                                            <a type="button" href="#" class="btn btn-action btn-reject"
-                                                data-toggle="modal" data-target="#exampleModal">Reject</a>
+                                            <a href="Rejected.php?noteid=<?php echo $note_id;?>" class="btn btn-action btn-reject" >Reject</a>
                                             <a href="InReview.php?noteid=<?php echo $note_id;?>" class="btn btn-action btn-interview ">InReview</a>
                                         </div>
                                     </td>
@@ -182,7 +181,7 @@ session_start(); ?>
                 <div class="modal-footer" style="justify-content: flex-end">
                     <div class="form-group">
                         <div class="row text-right">
-                            <button href="" name="rejected" class="btn btn-modal btn-reject">Reject</button>
+                            <button  name="rejected" class="btn btn-modal btn-reject">Reject</button>
                             <a href="#" class="btn btn-modal btn-cancel">Cancel</a>
                         </div>
                     </div>
@@ -192,4 +191,4 @@ session_start(); ?>
     </div>
     </form>
     <!-- End Modal -->
-
+    

@@ -88,6 +88,15 @@ session_start();
             line-height: 22px;
             color: #333333;
         }
+        div.scroll {
+                margin:4px, 4px;
+                padding:4px;
+                width: 100%;
+                height: 110px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                text-align:justify;
+        }
     </style>
 </head>
 
@@ -247,17 +256,30 @@ session_start();
                     <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12">
                         <div id="customer-review">
                             <h4>Customer Reviews</h4>
-                            <div class="reviews">
+                            <div class="reviews scroll">
+                            <?php
+                                $query = "SELECT U.UserID, U.FirstName, U.LastName, UP.ProfilePicture, SR.Comments FROM sellernotesreviews AS SR 
+                                            INNER JOIN user AS U ON U.UserID = SR.ReviewedByID
+                                            INNER JOIN userprofile AS UP ON UP.UserID = U.UserID
+                                                WHERE SR.NoteID = '$sellernoteid' AND SR.IsDeleted = '0'";
+                                $select_review = mysqli_query($connection, $query);
+                                $total_review = mysqli_num_rows($select_review);
+                                
+                                if($total_review != 0 ){
+                                while($row = mysqli_fetch_assoc($select_review)){
+
+                                
+                            ?>
                                 <!-- customer review 1 -->
                                 <div class="row">
                                     <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2">
-                                        <img src="../images/reviewer-1.png" alt="customer1">
+                                        <img src="../upload/<?php echo $row['UserID']; ?>/<?php echo $row['ProfilePicture'] ?>" alt="customer1">
                                     </div>
 
                                     <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10 review-details">
                                         <ul class="customer-review-ul">
                                             <li>
-                                                <h6>Richard Brown</h6>
+                                                <h6><?php echo $row['FirstName']." ".$row['LastName']; ?></h6>
                                             </li>
                                             <li>
                                                 <div class="d-inline-block">
@@ -281,92 +303,29 @@ session_start();
                                                 </div>
                                             </li>
                                             <li>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt
-                                                    deserunt odio consectetur.</p>
+                                                <p><?php echo $row['Comments'] ?></p>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                                 <hr>
+                                <?php
+                                }   
+                            }
+                            else{
+                                ?>
 
-                                <!-- customer review 2 -->
                                 <div class="row">
-                                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2">
-                                        <img src="../images/reviewer-2.png" alt="customer2">
-                                    </div>
-                                    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10 review-details">
-                                        <ul class="customer-review-ul">
-                                            <li>
-                                                <h6>Alice Ortiaz</h6>
-                                            </li>
-                                            <li>
-                                                <div class="d-inline-block">
-                                                    <div class="rate">
-                                                        <input type="radio" id="star5.2" name="rate" value="5" />
-                                                        <label for="star5.2" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">5 stars</label>
-                                                        <input type="radio" id="star4.2" name="rate" value="4" />
-                                                        <label for="star4.2" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">4 stars</label>
-                                                        <input type="radio" id="star3.2" name="rate" value="3" />
-                                                        <label for="star3.2" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">3 stars</label>
-                                                        <input type="radio" id="star2.2" name="rate" value="2" />
-                                                        <label for="star2.2" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">2 stars</label>
-                                                        <input type="radio" id="star1.2" name="rate" value="1" />
-                                                        <label for="star1.2" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">1 star</label>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt
-                                                    deserunt odio consectetur.</p>
-                                            </li>
-                                        </ul>
+                                    <div class="col-md-12 text-center no-reviews" style="color: black;">
+                                        <h4>No Review Found.</h4>
                                     </div>
                                 </div>
-                                <hr>
+                
+                                <?php
+                            }
+                                ?>
 
-                                <!-- customer review 3 -->
-                                <div class="row">
-                                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2">
-                                        <img src="../images/reviewer-3.png" alt="customer3">
-                                    </div>
-                                    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10 review-details">
-                                        <ul class="customer-review-ul">
-                                            <li>
-                                                <h6>Sara Passmore</h6>
-                                            </li>
-                                            <li>
-                                                <div class="d-inline-block">
-                                                    <div class="rate">
-                                                        <input type="radio" id="star5.3" name="rate" value="5" />
-                                                        <label for="star5.3" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">5 stars</label>
-                                                        <input type="radio" id="star4.3" name="rate" value="4" />
-                                                        <label for="star4.3" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">4 stars</label>
-                                                        <input type="radio" id="star3.3" name="rate" value="3" />
-                                                        <label for="star3.3" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">3 stars</label>
-                                                        <input type="radio" id="star2.3" name="rate" value="2" />
-                                                        <label for="star2.3" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">2 stars</label>
-                                                        <input type="radio" id="star1.3" name="rate" value="1" />
-                                                        <label for="star1.3" title="text" class="m-0"
-                                                            style="padding-bottom: 10px">1 star</label>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt
-                                                    deserunt odio consectetur.</p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>

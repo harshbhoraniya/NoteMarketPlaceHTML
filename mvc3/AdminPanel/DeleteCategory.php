@@ -11,10 +11,6 @@
     $query = "UPDATE `notecategories` SET `IsDeleted` = '1', `ModifiedDate` = '$currentdate', `ModifiedBy` = '$user_id' WHERE `NoteCategoryID` = '$category_id'";
     $update_category = mysqli_query($connection, $query);
     if($update_category){
-        ?>
-        <script>
-        location.replace('../AdminPanel/ManageCategory.php');
-        </script>
-    <?php
+        header('location: '.$url);
     }
 ?>

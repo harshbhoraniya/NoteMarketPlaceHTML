@@ -11,10 +11,6 @@
     $query = "UPDATE `notetype` SET `IsDeleted` = '1', `ModifiedDate` = '$currentdate', `ModifiedBy` = '$user_id' WHERE `NoteTypeID` = '$type_id'";
     $update_type = mysqli_query($connection, $query);
     if($update_type){
-        ?>
-        <script>
-        location.replace('../AdminPanel/ManageType.php');
-        </script>
-    <?php
+        header('location: '.$url);
     }
 ?>

@@ -11,10 +11,6 @@
     $query = "UPDATE `countries` SET `IsDeleted` = '1', `ModifiedDate` = '$currentdate', `ModifiedBy` = '$user_id' WHERE `CountryID` = '$country_id'";
     $update_country = mysqli_query($connection, $query);
     if($update_country){
-        ?>
-        <script>
-        location.replace('../AdminPanel/ManageCountry.php');
-        </script>
-    <?php
+        header('location: '.$url);
     }
 ?>

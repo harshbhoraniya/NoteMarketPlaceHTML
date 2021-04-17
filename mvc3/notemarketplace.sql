@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2021 at 01:37 PM
+-- Generation Time: Apr 17, 2021 at 01:50 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.1
 
@@ -84,7 +84,7 @@ INSERT INTO `downloads` (`DownloadID`, `NoteID`, `Seller`, `Downloader`, `IsSell
 (3, 3, 2, 7, 1, NULL, 1, '2021-03-23 11:03:00', 0, '0', 'Basic Computer Engineering Tech India Publication Series', 'IT', '2021-03-05 18:00:44', 7, NULL, 2, 0),
 (4, 4, 7, 8, 1, NULL, 1, '2021-03-23 12:03:02', 1, '150', 'Computer Science Illuminted - Seventh Edition', 'Science', '2021-03-05 18:00:44', 8, NULL, 2, 0),
 (5, 5, 7, 3, 1, NULL, 1, '2021-03-23 12:03:58', 1, '750', 'The Principle of Computer Hardware -Oxford', 'IT', '2021-03-05 18:00:44', 3, NULL, 2, 0),
-(6, 4, 7, 9, 0, NULL, 1, '2021-03-04 11:08:18', 1, '150', 'Computer Science Illuminted - Seventh Edition', 'Science', '2021-03-16 11:12:21', 9, '2021-03-16 11:12:21', 9, 0),
+(6, 4, 7, 9, 1, NULL, 1, '2021-04-13 16:04:39', 1, '150', 'Computer Science Illuminted - Seventh Edition', 'Science', '2021-03-16 11:12:21', 9, '2021-04-13 16:04:39', 7, 0),
 (7, 4, 7, 8, 1, NULL, 1, '2021-03-23 08:03:15', 1, '150', 'Computer Science Illuminted - Seventh Edition', 'Science', '2021-03-16 11:12:21', 8, '2021-03-16 11:12:21', 8, 0),
 (8, 2, 3, 9, 0, NULL, 0, NULL, 0, '0', 'Computer Science', 'Science', '2021-03-22 22:44:35', 9, '2021-03-22 22:44:35', 9, 0),
 (9, 3, 2, 9, 1, NULL, 1, '2021-03-23 12:03:02', 0, '0', 'Basic Computer Engineering Tech India Publication Series', 'IT', '2021-03-22 22:47:02', 9, '2021-03-22 22:47:02', 2, 0),
@@ -256,8 +256,8 @@ INSERT INTO `sellernotes` (`SellerNoteID`, `SellerID`, `Status`, `ActionedBy`, `
 (27, 3, 7, 3, NULL, '2021-03-17 11:35:27', 'The Computer Book', 2, 'bp_170321113350.png', 2, 254, 'echo $quer', 'University Of California', 2, 'Computer Science', '2147856', 'Mr. Himanshu Patel', 1, '254', 'preview_170321113350.pdf', '2021-03-17 16:03:50', 3, '2021-03-17 16:03:50', 3, 1, 0),
 (31, 9, 7, 9, NULL, '2021-03-17 11:50:05', 'The Computer Book', 2, 'bp_170321115001.png', 2, 254, 'Publishing this note will send note to administrator for review, once administrator review and approve then this note will be published to portal. Press yes to continue.', 'IIT', 2, 'Computer Enigineering', '2145637', 'Mr. Himanshu Patel', 0, '0', 'preview_170321115001.pdf', '2021-03-17 16:20:01', 9, '2021-03-17 16:20:01', 9, 1, 0),
 (32, 9, 7, 9, NULL, '2021-03-17 11:52:20', 'Computer Book', 2, 'bp_170321115208.png', 2, 258, 'Publishing this note will send note to administrator for review, once administrator review and approve then this note will be published to portal. Press yes to continue.', 'University Of Atlantas', 2, 'Computer', '5665', 'Mr. Himanshu Patel', 1, '25', 'preview_170321115208.pdf', '2021-03-17 16:22:08', 9, '2021-03-17 16:22:08', 9, 1, 0),
-(33, 9, 7, 9, NULL, '2021-03-17 11:54:40', 'The Computer Book', 2, 'bp_170321115433.png', 2, 254, 'Publishing this note will send note to administrator for review, once administrator review and approve then this note will be published to portal. Press yes to continue.', 'IIT', 2, 'Computer Enigineering', '1478523', 'Mr. Himanshu Patel', 0, '0', 'preview_170321115433.pdf', '2021-03-17 16:24:33', 9, '2021-03-17 16:24:33', 9, 1, 0),
-(34, 9, 7, 9, NULL, '2021-03-17 11:59:22', 'The Computer Book', 2, 'bp_170321115917.png', 2, 1111, 'PHPMailer\\PHPMailer\\Exception: SMTP Error: Could not authenticate', 'University Of California', 2, 'Computer Science', '2147856', 'Mr. Himanshu Patel', 0, '0', 'preview_170321115917.pdf', '2021-03-17 16:29:17', 9, '2021-03-17 16:29:17', 9, 1, 0);
+(33, 9, 10, 9, 'Note is not appropiat', '2021-03-17 11:54:40', 'The Computer Book', 2, 'bp_170321115433.png', 2, 254, 'Publishing this note will send note to administrator for review, once administrator review and approve then this note will be published to portal. Press yes to continue.', 'IIT', 2, 'Computer Enigineering', '1478523', 'Mr. Himanshu Patel', 0, '0', 'preview_170321115433.pdf', '2021-03-17 16:24:33', 9, '2021-04-17 13:04:31', 2, 1, 0),
+(34, 9, 10, 9, 'Note is not appropiat', '2021-03-17 11:59:22', 'The Computer Book', 2, 'bp_170321115917.png', 2, 1111, 'PHPMailer\\PHPMailer\\Exception: SMTP Error: Could not authenticate', 'University Of California', 2, 'Computer Science', '2147856', 'Mr. Himanshu Patel', 0, '0', 'preview_170321115917.pdf', '2021-03-17 16:29:17', 9, '2021-04-17 13:04:42', 2, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -469,7 +469,9 @@ INSERT INTO `user` (`UserID`, `RoleID`, `FirstName`, `LastName`, `EmailID`, `Pas
 (10, 3, 'Bhavik', 'Patel', 'bhavik.exam@gmail.com', '1', 1, '3dcf6b95b1c6424bc4431b8cb806df0d', '2021-03-17 16:49:45', NULL, '2021-03-17 16:49:45', NULL, 1, 0),
 (11, 3, 'Bhavik', 'Patel', 'yadavbhavik.senseque@gmail.com', '1', 1, 'f7a3c532caa437cde6713ac3ddfcd367', '2021-03-17 16:56:35', NULL, '2021-03-31 07:03:12', 7, 1, 0),
 (12, 2, 'Hiral', 'Bhoraniya', '170540107016@darshan.ac.in', '1', 1, '39306420c5af7be240596784409ce68c', NULL, NULL, '2021-04-07 07:04:16', 12, 1, 0),
-(13, 2, 'Shubham', 'Vadukul', 'shubham.vadukul@searce.com', 'admin123', 1, '1cfc7d231ff9c534a19e3ab7fdbcd59f', '2021-04-06 07:04:02', 2, '2021-04-07 07:04:07', 13, 1, 0);
+(13, 2, 'Shubham', 'Vadukul', 'shubham.vadukul@searce.com', 'admin123', 1, '1cfc7d231ff9c534a19e3ab7fdbcd59f', '2021-04-06 07:04:02', 2, '2021-04-07 07:04:07', 13, 1, 0),
+(14, 3, 'Harsh', 'Happy', 'badboys28011@gmail.com', '1', 0, '22a3fcc18e2d174fa66ec77c3c5959c8', NULL, NULL, NULL, NULL, 1, 0),
+(15, 3, 'Ridhi', 'Patel', 'ridhi@gmail.com', '123456', 0, '33ba1c4537ac90f9935702e1b7e61d90', NULL, NULL, NULL, NULL, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -716,7 +718,7 @@ ALTER TABLE `systemconfigurations`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `userprofile`
