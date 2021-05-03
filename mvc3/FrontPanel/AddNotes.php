@@ -21,6 +21,7 @@
 
 <?php
     $ID = $_SESSION['ID'];
+    $loginID = $_SESSION['ID'];
     $currentdate = date("Y-m-d H:m:s");
 
     if (isset($_POST['save'])){
@@ -99,7 +100,28 @@
             $valid_uploadnote_ext = array('pdf');
         }
 
-        if(in_array($displaypic_ext_check,$valid_displaypic_ext) && in_array($uploadnote_ext_check,$valid_uploadnote_ext) && in_array($preview_ext_check,$valid_preview_ext) ) {
+        if(!in_array($displaypic_ext_check,$valid_displaypic_ext)){
+            ?>
+                <script>
+                    alert("please choose proper file type !! for display picture jpg , jpeg , png !!");
+                </script>
+            <?php
+        } 
+        else if(!in_array($uploadnote_ext_check,$valid_uploadnote_ext) ){
+            ?>
+                <script>
+                    alert("please choose proper file type !! for Upload attachment file pdf ");
+                </script>
+            <?php
+        }
+        else if( !in_array($preview_ext_check,$valid_preview_ext) ) {
+            ?>
+                <script>
+                    alert("please choose proper file type !! for note preview file pdf ");
+                </script>
+            <?php
+        }
+        else{
 
             $query = "INSERT INTO `sellernotes`(`SellerID`, `Status`, `Title`, `Category`, `DisplayPicture`, `NoteType`, `NumberofPages`, `Description`, `UniversityName`, `Country`, `Course`, `CourseCode`, `Professor`, `IsPaid`, `SellingPrice`, `NotesPreview`, `CreatedDate`, `CreatedBy`, `ModifiedDate`, `ModifiedBy`, `IsActive`) 
                             VALUES ('$loginID','6','$title','$category','$displaypicnewname','$type','$pages','$description','$institute','$country' , '$course', '$coursecode', '$professor', '$sellfor', '$price', '$previewnewname', '$currentdate', '$loginID', '$currentdate', '$loginID', '$isactive')";
@@ -152,13 +174,6 @@
             }
 
         }
-        else{
-            ?>
-                <script>
-                    alert("please choose proper file type !! for display picture jpg , jpeg , png !! for preview and attachment file pdf ");
-                </script>
-            <?php
-        }
     }
 
     if(isset($_POST['publish'])){      
@@ -182,7 +197,7 @@
                     $mail->Port = 587;
                     $config_email = 'hdrsh19@gmail.com';
                     $mail->Username = $config_email;
-                    $mail->Password = 'H@rsh1199';
+                    $mail->Password = 'harshkumarbhoraniya';
                     $mail->setFrom($config_email, 'NotesMarketPlace');  // This email address and name will be visible as sender of email
                     $mail->addAddress('hdrsh128@gmail.com', 'Harsh Patel');  // This email is where you want to send the email
                     $mail->addReplyTo($config_email, 'NotesMarketPlace');   // If receiver replies to the email, it will be sent to this email address
@@ -220,15 +235,11 @@
                     $mail->send();
                 } catch (Exception $e) {
                     ?>
-                    <script>
                         alert(<?php echo "Error in sending email. Mailer Error: ".$e ?>);
-                    </script>
                     <?php
                 }
                 ?>
-                }else{
-        
-                }
+            }
             
         </script>
         <?php
